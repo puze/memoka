@@ -1,12 +1,13 @@
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:memoka/data_manager.dart';
-import 'package:memoka/memoka.dart';
-import 'package:memoka/memoka_data.dart';
+import 'package:memoka/memoka/memoka.dart';
+import 'package:memoka/memoka/memoka_data.dart';
 
 /// 메모카 카드 컨트롤
 class MemokaBody extends StatefulWidget {
-  const MemokaBody({Key? key}) : super(key: key);
+  final String excelTable;
+  const MemokaBody({Key? key, required this.excelTable}) : super(key: key);
 
   @override
   _MemokaBodyState createState() => _MemokaBodyState();
@@ -30,15 +31,8 @@ class _MemokaBodyState extends State<MemokaBody> {
     initMemokaBody();
   }
 
-  Future<Excel> readFile() async {
-    // TODO 데이터 널 체크
-    return await DataManager().readFile();
-  }
-
   void initMemokaBody() async {
-    // TODO 데이터 널 체크
-    Excel memokaExcel = await readFile();
-    _memokaData = MemokaData(memokaExcel);
+    _memokaData = MemokaData(DataManager().excelData, widget.excelTable);
     _memoka = instanceMemoka(MemokaStatus.init);
 
     /// 인스턴스화한 순간은 key의 state가 null임
@@ -52,15 +46,7 @@ class _MemokaBodyState extends State<MemokaBody> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: readFile(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData == false) {
-            return const CircularProgressIndicator();
-          } else {
-            return Center(child: _memoka);
-          }
-        });
+    return _memoka;
   }
 
   void nextCallback() {

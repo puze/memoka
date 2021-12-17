@@ -10,6 +10,7 @@ import 'package:flutter/services.dart' show ByteData, rootBundle;
 
 class DataManager {
   static final DataManager _instance = DataManager._internal();
+  late Excel excelData;
 
   factory DataManager() {
     return _instance;
@@ -22,8 +23,8 @@ class DataManager {
   Future<Excel> readFile() async {
     ByteData data = await rootBundle.load("assets/Question.xlsx");
     var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-    return Excel.decodeBytes(bytes);
-
+    excelData = Excel.decodeBytes(bytes);
+    return excelData;
     // final excel = Excel.decodeBytes(bytes);
     // for (var table in excel.tables.keys) {
     //   print(table); //sheet Name

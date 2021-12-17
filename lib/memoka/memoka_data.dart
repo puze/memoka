@@ -1,14 +1,14 @@
 import 'package:excel/excel.dart';
 
 class MemokaData {
-  final _meokaTable = 'OXQuestion';
   late List<List<Data?>> _memokaData;
   int _currentIndex = 0;
   static const int front = 0;
   static const int back = 1;
 
-  MemokaData(Excel excelData) {
-    _memokaData = excelData.tables[_meokaTable]!.rows;
+  MemokaData(Excel excelData, String meokaTable) {
+    //excelData.
+    _memokaData = excelData.tables[meokaTable]!.rows;
   }
 
   bool isFirstMemoka() {
