@@ -9,32 +9,31 @@ class MemokaHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var memokaData = DataManager().excelData;
-    return Center(
-        child: GridView.builder(
+    var memokaData = DataManager().memokaGroupList;
+    return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
-      itemCount: memokaData.tables.keys.length,
+      itemCount: memokaData.memokaGroups.length,
       itemBuilder: (context, index) {
-        String table = memokaData.tables.keys.elementAt(index);
+        String cover = memokaData.memokaGroups[index].memokaCover;
         return GestureDetector(
           child:
-              Hero(tag: 'memoka$index', child: MemokaCover(coverText: table)),
+              Hero(tag: 'memoka$index', child: MemokaCover(coverText: cover)),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => Scaffold(
                           body: MemokaBody(
-                        excelTable: table,
+                        memokaGroup: memokaData.memokaGroups[index],
                       ))),
             );
           },
         );
       },
-    ));
+    );
   }
 }

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka.dart';
 import 'package:memoka/memoka/memoka_data.dart';
+import 'package:memoka/memoka/memoka_group_data.dart';
 
 /// 메모카 카드 컨트롤
 class MemokaBody extends StatefulWidget {
-  final String excelTable;
-  const MemokaBody({Key? key, required this.excelTable}) : super(key: key);
+  final MemokaGroup memokaGroup;
+  const MemokaBody({Key? key, required this.memokaGroup}) : super(key: key);
 
   @override
   _MemokaBodyState createState() => _MemokaBodyState();
@@ -16,7 +17,7 @@ class MemokaBody extends StatefulWidget {
 class _MemokaBodyState extends State<MemokaBody> {
   final GlobalKey _memokaKey = GlobalKey();
 
-  late MemokaData _memokaData;
+  late MemokaGroupData _memokaData;
   late Memoka _memoka;
   late Excel memokaExcel;
 
@@ -32,7 +33,7 @@ class _MemokaBodyState extends State<MemokaBody> {
   }
 
   void initMemokaBody() async {
-    _memokaData = MemokaData(DataManager().excelData, widget.excelTable);
+    _memokaData = MemokaGroupData(widget.memokaGroup);
     _memoka = instanceMemoka(MemokaStatus.init);
 
     /// 인스턴스화한 순간은 key의 state가 null임

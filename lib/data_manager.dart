@@ -1,15 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:memoka/memoka/memoka.dart';
 import 'package:path/path.dart';
 import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'memoka/memoka_data.dart';
 
 class DataManager {
   static final DataManager _instance = DataManager._internal();
+  MemokaGroupList memokaGroupList = MemokaGroupList(memokaGroups: []);
   late Excel excelData;
 
   factory DataManager() {
@@ -20,19 +26,84 @@ class DataManager {
     // 초기화
   }
 
-  Future<Excel> readFile() async {
+  Future<Excel> readAssetFile() async {
     ByteData data = await rootBundle.load("assets/Question.xlsx");
     var bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
     excelData = Excel.decodeBytes(bytes);
     return excelData;
-    // final excel = Excel.decodeBytes(bytes);
-    // for (var table in excel.tables.keys) {
-    //   print(table); //sheet Name
-    //   print(excel.tables[table]?.maxCols);
-    //   print(excel.tables[table]?.maxRows);
-    //   for (var row in excel.tables[table]!.rows) {
-    //     print("$row");
-    //   }
-    // }
+  }
+
+  Excel readExternalFile(File file) {
+    var bytes = file.readAsBytesSync();
+    return Excel.decodeBytes(bytes);
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/data.json');
+  }
+
+  Future<File> writeData(String data) async {
+    final file = await _localFile;
+
+    // 파일 쓰기
+    return file.writeAsString('$data');
+  }
+
+  Future<void> saveData() async {
+    final file = await _localFile;
+
+    file.writeAsString(jsonEncode(memokaGroupList));
+  }
+
+  Future<MemokaGroupList> readData() async {
+    try {
+      final file = await _localFile;
+
+      if (!file.existsSync()) {
+        debugPrint('did not exist file');
+        await initData();
+      }
+
+      // 파일 읽기.
+      String contents = await file.readAsString();
+      var jsonData = jsonDecode(contents);
+      memokaGroupList = MemokaGroupList.fromJson(jsonData);
+      return memokaGroupList;
+    } catch (e) {
+      debugPrint(e.toString());
+      return memokaGroupList;
+    }
+  }
+
+  Future<void> addExcelData(Excel excel) async {
+    // table : sheet name
+    for (var table in excel.tables.keys) {
+      var memokaGroup = MemokaGroup(memokaCover: table, memokaData: []);
+      memokaGroupList.memokaGroups.add(memokaGroup);
+      debugPrint('sheet name : $table'); //sheet Name
+      // print(excel.tables[table]?.maxCols);
+      // print(excel.tables[table]?.maxRows);
+      for (var row in excel.tables[table]!.rows) {
+        MemokaData memokaData =
+            MemokaData(front: row[0]?.value, back: row[1]?.value);
+        memokaGroup.memokaData.add(memokaData);
+        // debugPrint("$row");
+      }
+    }
+    await saveData();
+  }
+
+  Future<void> initData() async {
+    final file = await _localFile;
+    file.create();
+    var assetData = await readAssetFile();
+    await addExcelData(assetData);
   }
 }
