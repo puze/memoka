@@ -47,3 +47,5 @@ app.*.map.json
 
 work_list.xlsx
 assets/
+
+pubspec.lock
