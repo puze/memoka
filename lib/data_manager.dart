@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:memoka/memoka/memoka.dart';
-import 'package:path/path.dart';
 import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show ByteData, rootBundle;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'memoka/memoka_data.dart';
 
@@ -53,7 +49,7 @@ class DataManager {
     final file = await _localFile;
 
     // 파일 쓰기
-    return file.writeAsString('$data');
+    return file.writeAsString(data);
   }
 
   Future<void> saveData() async {
@@ -105,5 +101,10 @@ class DataManager {
     file.create();
     var assetData = await readAssetFile();
     await addExcelData(assetData);
+  }
+
+  Future<void> removeMemokaGroup(MemokaGroup memokaGroup) async {
+    memokaGroupList.memokaGroups.remove(memokaGroup);
+    await saveData();
   }
 }

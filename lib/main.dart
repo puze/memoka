@@ -1,16 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:excel/excel.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:memoka/data_manager.dart';
+import 'package:memoka/listener_outside_tap.dart';
 import 'package:memoka/memoka_home.dart';
-import 'package:memoka/memoka/memoka.dart';
-import 'package:memoka/memoka/memoka_body.dart';
 import 'package:memoka/memoka/memoka_data.dart';
-import 'package:memoka/memoka/memoka_group_data.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,54 +54,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: FutureBuilder(
-              future: initData(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData == false) {
-                  return const CircularProgressIndicator();
-                } else {
-                  return Center(child: MemokaHome());
-                }
-              }),
+    return GestureDetector(
+      onTap: ListenerOutsideTap().onClickOutsideTap,
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: FutureBuilder(
+                future: initData(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData == false) {
+                    return const CircularProgressIndicator();
+                  } else {
+                    return Center(child: MemokaHome());
+                  }
+                }),
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pickFile,
-        child: Icon(Icons.add),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _pickFile,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
 
+  // 외부파일 불러오기
   Future<void> _pickFile() async {
-    String? result;
+    FilePickerResult? result;
     try {
       setState(() {
         _isBusy = true;
         _currentFile = null;
       });
-      final params = OpenFileDialogParams(
-        dialogType: OpenFileDialogType.document,
-        sourceType: SourceType.photoLibrary,
-      );
-      result = await FlutterFileDialog.pickFile(params: params);
+      result = await FilePicker.platform
+          .pickFiles(type: FileType.custom, allowedExtensions: ['xls', 'xlsx']);
       print(result);
     } on PlatformException catch (e) {
       print(e);
     } finally {
-      setState(() {
-        _pickedFilePath = result;
-        if (result != null) {
-          _currentFile = File(result);
-          var excelFile = DataManager().readExternalFile(_currentFile!);
-          DataManager().addExcelData(excelFile);
-        } else {
-          _currentFile = null;
-        }
-        _isBusy = false;
-      });
+      if (result != null) {
+        _currentFile = File(result.files.single.path!);
+        var excelFile = DataManager().readExternalFile(_currentFile!);
+        await DataManager().addExcelData(excelFile);
+      } else {
+        // User canceled the picker
+        _currentFile = null;
+      }
+      _isBusy = false;
+      setState(() {});
     }
   }
 }
