@@ -12,6 +12,11 @@ class MemokaHome extends StatefulWidget {
 
 class MemokaHomeState extends State<MemokaHome> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var memokaData = DataManager().memokaGroupList;
 
@@ -25,10 +30,28 @@ class MemokaHomeState extends State<MemokaHome> {
       itemBuilder: (context, index) {
         String cover = memokaData.memokaGroups[index].memokaCover;
         return MemokaCover(
+          key: GlobalKey(),
           coverText: cover,
           memokaGroup: memokaData.memokaGroups[index],
+          onLognPressCallback: clearRemoveButton,
+          removeMemokaCallback: removeMemoka,
         );
       },
     );
+  }
+
+  MemokaCoverState? previousMemokaState;
+
+  void clearRemoveButton(MemokaCoverState? memokaCoverState) {
+    if (previousMemokaState != null) {
+      previousMemokaState!.listenerOutSideTap();
+    }
+    previousMemokaState = memokaCoverState;
+  }
+
+  void removeMemoka() {
+    setState(() {
+      previousMemokaState = null;
+    });
   }
 }

@@ -31,7 +31,7 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   final int _rotationTime = 200;
   final int _alignTime = 100;
   // 드래그 임계치
-  final double threshold = 40;
+  final double threshold = 30;
 
   late Transformer _transformer;
 
