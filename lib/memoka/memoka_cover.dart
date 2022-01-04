@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/listener_outside_tap.dart';
 import 'package:memoka/memoka/memoka_data.dart';
-import 'package:memoka/memoka_home.dart';
 import 'package:vibration/vibration.dart';
 
 import 'memoka_body.dart';
@@ -111,6 +110,8 @@ class MemokaCoverState extends State<MemokaCover> {
   }
 
   void listenerOutSideTap() {
+    if (!isRemoveButtonVisibility) return;
+
     setState(() {
       isRemoveButtonVisibility = false;
     });

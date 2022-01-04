@@ -4,9 +4,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:memoka/data_manager.dart';
+import 'package:memoka/license_route.dart';
 import 'package:memoka/listener_outside_tap.dart';
-import 'package:memoka/memoka_home.dart';
 import 'package:memoka/memoka/memoka_data.dart';
+
+import 'memoka/memoka_cover.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isBusy = false;
   File? _currentFile;
   String? _pickedFilePath;
+  MemokaCoverState? previousMemokaState;
 
   @override
   void initState() {
@@ -57,6 +60,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return GestureDetector(
       onTap: ListenerOutsideTap().onClickOutsideTap,
       child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LicenseRoute()));
+                },
+                icon: const Icon(Icons.settings))
+          ],
+        ),
         body: SafeArea(
           child: Center(
             child: FutureBuilder(
@@ -65,7 +80,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (snapshot.hasData == false) {
                     return const CircularProgressIndicator();
                   } else {
-                    return Center(child: MemokaHome());
+                    var memokaData = DataManager().memokaGroupList;
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: memokaData.memokaGroups.length,
+                      itemBuilder: (context, index) {
+                        String cover =
+                            memokaData.memokaGroups[index].memokaCover;
+                        return MemokaCover(
+                          key: GlobalKey(),
+                          coverText: cover,
+                          memokaGroup: memokaData.memokaGroups[index],
+                          onLognPressCallback: clearRemoveButton,
+                          removeMemokaCallback: removeMemoka,
+                        );
+                      },
+                    );
                   }
                 }),
           ),
@@ -82,10 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _pickFile() async {
     FilePickerResult? result;
     try {
-      setState(() {
-        _isBusy = true;
-        _currentFile = null;
-      });
+      // setState(() {
+      //   _isBusy = true;
+      //   _currentFile = null;
+      // });
       result = await FilePicker.platform
           .pickFiles(type: FileType.custom, allowedExtensions: ['xls', 'xlsx']);
       print(result);
@@ -100,8 +135,22 @@ class _MyHomePageState extends State<MyHomePage> {
         // User canceled the picker
         _currentFile = null;
       }
-      _isBusy = false;
+      // _isBusy = false;
+      previousMemokaState = null;
       setState(() {});
     }
+  }
+
+  void clearRemoveButton(MemokaCoverState? memokaCoverState) {
+    if (previousMemokaState != null) {
+      previousMemokaState!.listenerOutSideTap();
+    }
+    previousMemokaState = memokaCoverState;
+  }
+
+  void removeMemoka() {
+    setState(() {
+      previousMemokaState = null;
+    });
   }
 }
