@@ -6,21 +6,15 @@ import 'package:vibration/vibration.dart';
 
 import 'memoka_body.dart';
 
-typedef OnLongPressCallback = void Function(MemokaCoverState? memokaCoverState);
-
 class MemokaCover extends StatefulWidget {
   final String coverText;
   final MemokaGroup memokaGroup;
-  final OnLongPressCallback? onLognPressCallback;
-  final VoidCallback removeMemokaCallback;
 
-  const MemokaCover(
-      {Key? key,
-      required this.coverText,
-      required this.memokaGroup,
-      required this.onLognPressCallback,
-      required this.removeMemokaCallback})
-      : super(key: key);
+  const MemokaCover({
+    Key? key,
+    required this.coverText,
+    required this.memokaGroup,
+  }) : super(key: key);
 
   @override
   State<MemokaCover> createState() => MemokaCoverState();
@@ -28,12 +22,6 @@ class MemokaCover extends StatefulWidget {
 
 class MemokaCoverState extends State<MemokaCover> {
   bool isRemoveButtonVisibility = false;
-
-  @override
-  void initState() {
-    super.initState();
-    ListenerOutsideTap().addListener(listenerOutSideTap);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +37,15 @@ class MemokaCoverState extends State<MemokaCover> {
                       Color.fromARGB(255, 100, 100, 100), BlendMode.modulate)
                   : const ColorFilter.mode(
                       Color.fromARGB(0, 0, 0, 0), BlendMode.dst),
-              child: Image.asset(
-                'assets/memoka.png',
+              child:
+                  // Container(
+                  //   color: Colors.pink,
+                  // )
+                  Image.asset(
+                'assets/moca_icon/cover.png',
               ),
             ),
-            Positioned(child: Text(widget.coverText)),
-            Positioned(
-                child: Visibility(
-                    visible: isRemoveButtonVisibility,
-                    child: _removeMemokaIcon()))
+            Text(widget.coverText),
           ]),
           onTap: () {
             Navigator.push(
@@ -69,51 +57,13 @@ class MemokaCoverState extends State<MemokaCover> {
                       ))),
             );
           },
-          onLongPress: () {
-            setState(() {
-              widget.onLognPressCallback!(this);
-              isRemoveButtonVisibility = true;
-              Vibration.vibrate(duration: 30, amplitude: 64);
-            });
-          },
         ));
   }
 
-  Widget _removeMemokaIcon() {
-    return GestureDetector(
-      onTap: () {},
-      child: RawMaterialButton(
-        onPressed: () {
-          // 부모의 state 갱신
-          // MemokaHomeState parent =
-          //     context.findAncestorStateOfType<MemokaHomeState>()!;
-          // parent.setState(() {
-          //   DataManager().removeMemokaGroup(widget.memokaGroup);
-          // });
-
-          DataManager().removeMemokaGroup(widget.memokaGroup);
-          widget.removeMemokaCallback();
-        },
-        elevation: 2.0,
-        fillColor: Colors.white,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.remove),
-        constraints: const BoxConstraints(minWidth: 70, minHeight: 70),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    ListenerOutsideTap().removeListener(listenerOutSideTap);
-  }
-
-  void listenerOutSideTap() {
-    if (!isRemoveButtonVisibility) return;
-
+  void onLongPressMemokaCover() {
     setState(() {
-      isRemoveButtonVisibility = false;
+      isRemoveButtonVisibility = true;
+      Vibration.vibrate(duration: 30, amplitude: 64);
     });
   }
 }

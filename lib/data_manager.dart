@@ -12,6 +12,8 @@ import 'memoka/memoka_data.dart';
 class DataManager {
   static final DataManager _instance = DataManager._internal();
   MemokaGroupList memokaGroupList = MemokaGroupList(memokaGroups: []);
+  bool beenInit = false;
+
   late Excel excelData;
 
   factory DataManager() {
@@ -71,6 +73,7 @@ class DataManager {
       String contents = await file.readAsString();
       var jsonData = jsonDecode(contents);
       memokaGroupList = MemokaGroupList.fromJson(jsonData);
+      beenInit = true;
       return memokaGroupList;
     } catch (e) {
       debugPrint(e.toString());
