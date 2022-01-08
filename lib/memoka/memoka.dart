@@ -151,7 +151,10 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
             height: MediaQuery.of(context).size.width * 0.8 * 1.4,
             child: Stack(
               children: [
-                Image.asset('assets/moca_icon/memoka.png'),
+                if (isTopPage())
+                  Image.asset('assets/moca_icon/memoka_first.png')
+                else
+                  Image.asset('assets/moca_icon/memoka.png'),
                 // 중앙 컨텐츠
                 Center(
                     child: Padding(
@@ -165,18 +168,18 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
                   bottom: 30,
                 ),
                 // 첫페이지 표시
-                Positioned(
-                  child: Visibility(
-                    child: Container(
-                      color: Colors.red,
-                      width: 10,
-                      height: 40,
-                    ),
-                    visible: isTopPage(),
-                  ),
-                  top: -20,
-                  right: 10,
-                )
+                // Positioned(
+                //   child: Visibility(
+                //     child: Container(
+                //       color: Colors.red,
+                //       width: 10,
+                //       height: 40,
+                //     ),
+                //     visible: isTopPage(),
+                //   ),
+                // top: -20,
+                //   right: 10,
+                // )
               ],
             ),
           ),

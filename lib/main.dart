@@ -94,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: RawMaterialButton(
         onPressed: _pickFile,
         child: Image.asset('assets/moca_icon/add.png'),
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
             minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
       ),
     );
