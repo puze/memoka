@@ -4,6 +4,7 @@ import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 import 'package:memoka/memoka/memoka_group_data.dart';
+import 'package:memoka/tools/theme_colors.dart';
 
 /// 메모카 카드 컨트롤
 class MemokaBody extends StatefulWidget {
@@ -47,7 +48,16 @@ class _MemokaBodyState extends State<MemokaBody> {
 
   @override
   Widget build(BuildContext context) {
-    return _memoka;
+    return Scaffold(
+        backgroundColor: ThemeColors().backgroundColor,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _topBar(),
+              Expanded(child: _memoka),
+            ],
+          ),
+        ));
   }
 
   void nextCallback() {
@@ -73,6 +83,42 @@ class _MemokaBodyState extends State<MemokaBody> {
       status: memokaStatus,
       nextCallback: nextCallback,
       previousCallback: _previousCallback,
+    );
+  }
+
+  Widget _topBar() {
+    return Container(
+      height: 56,
+      child: Row(
+        children: [
+          Expanded(child: SizedBox(height: 40, child: _backIcon())),
+          Expanded(child: SizedBox(height: 40, child: _starigtIcon())),
+          Expanded(child: SizedBox(height: 40, child: _shuffleIcon()))
+        ],
+      ),
+    );
+  }
+
+  Widget _backIcon() {
+    return IconButton(
+      icon: Image.asset('assets/moca_icon/back.png'),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget _starigtIcon() {
+    return IconButton(
+      icon: Image.asset('assets/moca_icon/straight.png'),
+      onPressed: () {},
+    );
+  }
+
+  Widget _shuffleIcon() {
+    return IconButton(
+      icon: Image.asset('assets/moca_icon/shuffle.png'),
+      onPressed: () {},
     );
   }
 }

@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -66,18 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ThemeColors().backgroundColor,
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LicenseRoute()));
-              },
-              icon: const Icon(Icons.settings))
-        ],
-      ),
+      // appBar: AppBar(
+      //   actions: [
+      //     IconButton(
+      //         onPressed: () {
+      //           Navigator.push(
+      //               context,
+      //               MaterialPageRoute(
+      //                   builder: (context) => const LicenseRoute()));
+      //         },
+      //         icon: const Icon(Icons.settings))
+      //   ],
+      // ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(entirePadding, 0, entirePadding, 0),
@@ -91,9 +91,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: RawMaterialButton(
         onPressed: _pickFile,
-        child: const Icon(Icons.add),
+        child: Image.asset('assets/moca_icon/add.png'),
+        constraints: BoxConstraints(
+            minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
       ),
     );
   }
@@ -161,15 +163,20 @@ class _MyHomePageState extends State<MyHomePage> {
     // (가로 전체길이 -3*패딩)/한줄의 아이템 개수 /아이템 대비 비율
     double iconSize =
         (MediaQuery.of(context).size.width - 3 * entirePadding) / 2 / 3;
-
+    RenderBox? renderBox =
+        _memokaKeyList[index].currentContext!.findRenderObject() as RenderBox;
+    Offset position = renderBox.localToGlobal(Offset.zero);
     setState(() {
       _removeMemokaIcon = Positioned(
-        left: iconSize * calculateXPos(index),
-        top: (MediaQuery.of(context).size.height - kToolbarHeight - 24) /
-            8 *
-            ((index / 2).floor() + 1 / 2),
+        // left: iconSize * calculateXPos(index),
+        left: position.dx + 2 * entirePadding,
+        // top: (MediaQuery.of(context).size.height - kToolbarHeight - 24) /
+        //     8 *
+        //     ((index / 2).floor() + 1 / 2),
+        top: position.dy,
         child: RawMaterialButton(
           onPressed: () {
+            _refreshKeyList();
             setState(() {
               _isMemokaRemoveIcon = false;
               DataManager().removeMemokaGroup(memokaGroup);
@@ -197,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           },
           child: Container(
-            color: Color.fromARGB(95, 255, 55, 55),
+            color: Colors.transparent,
           ),
         ));
   }
@@ -210,6 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //   _isBusy = true;
       //   _currentFile = null;
       // });
+      _isMemokaRemoveIcon = false;
       result = await FilePicker.platform
           .pickFiles(type: FileType.custom, allowedExtensions: ['xls', 'xlsx']);
       print(result);

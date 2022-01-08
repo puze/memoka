@@ -61,12 +61,22 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   @override
   void initState() {
     _transformer = _initTransform;
-    frontWidget = Text(widget.front);
-    backWidget = Text(widget.back);
+    frontWidget = Text(
+      widget.front,
+      style: textStyle(),
+    );
+    backWidget = Text(
+      widget.back,
+      style: textStyle(),
+    );
     contents = frontWidget;
     _initController();
     _initAlignment();
     super.initState();
+  }
+
+  TextStyle textStyle() {
+    return const TextStyle(fontSize: 20);
   }
 
   /// 애니메이션 컨트롤러 초기화
@@ -138,21 +148,21 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
           alignment: _dragAlignment,
           child: Container(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.8 * 0.7,
-            color: Colors.amberAccent,
+            height: MediaQuery.of(context).size.width * 0.8 * 1.4,
             child: Stack(
               children: [
+                Image.asset('assets/moca_icon/memoka.png'),
                 // 중앙 컨텐츠
                 Center(
                     child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: contents,
                 )),
-                // 오른쪽 하단 페이지
+                // 오른쪽 하단 페이지 넘버
                 Positioned(
                   child: Text(widget.page.toString()),
-                  right: 10,
-                  bottom: 10,
+                  right: 30,
+                  bottom: 30,
                 ),
                 // 첫페이지 표시
                 Positioned(
