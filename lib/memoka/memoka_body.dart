@@ -16,10 +16,12 @@ class MemokaBody extends StatefulWidget {
 }
 
 class _MemokaBodyState extends State<MemokaBody> {
-  final GlobalKey _memokaKey = GlobalKey();
+  GlobalKey<MemokaState> _memokaKey = GlobalKey();
+  GlobalKey<MemokaState>? _previousMemokaKey;
 
   late MemokaGroupData _memokaData;
   late Memoka _memoka;
+  Memoka? _previousMemoka;
   late Excel memokaExcel;
 
   bool goNext = false;
@@ -27,15 +29,19 @@ class _MemokaBodyState extends State<MemokaBody> {
 
   Offset onDragOffset = Offset.zero;
 
+// 셔플 시 복수 메모카 컨트롤
+  final List<Widget> _memokaArray = [];
+
   @override
   void initState() {
     super.initState();
     initMemokaBody();
   }
 
-  void initMemokaBody() async {
+  void initMemokaBody() {
     _memokaData = MemokaGroupData(widget.memokaGroup);
     _memoka = instanceMemoka(MemokaStatus.init);
+    _memokaArray.add(_memoka);
 
     /// 인스턴스화한 순간은 key의 state가 null임
     /// 해결하기위해 1frame을 skip하고 빌드를 다시함
@@ -54,7 +60,11 @@ class _MemokaBodyState extends State<MemokaBody> {
           child: Column(
             children: [
               _topBar(),
-              Expanded(child: _memoka),
+              Expanded(
+                  child: Stack(
+                alignment: Alignment.center,
+                children: _memokaArray,
+              ))
             ],
           ),
         ));
@@ -74,20 +84,52 @@ class _MemokaBodyState extends State<MemokaBody> {
     });
   }
 
+  void _shuffleMiddleCallback() {
+    setState(() {
+      _memokaArray.remove(_previousMemoka);
+      _memokaArray.insert(0, _previousMemoka!);
+    });
+  }
+
+  void _shuffleEndCallback() {
+    setState(() {
+      _memokaArray.remove(_previousMemoka);
+    });
+  }
+
+  void _shuffle() async {
+    _previousMemoka = _memoka;
+    _previousMemokaKey = _memokaKey;
+    _memokaKey = GlobalKey();
+    _memoka = instanceMemoka(MemokaStatus.init);
+    _memokaArray.insert(0, _memoka);
+    _previousMemokaKey!.currentState!.shuffleFront();
+
+    /// 해결하기위해 1frame을 skip하고 빌드를 다시함
+    Future.delayed(const Duration(milliseconds: 16), () {
+      WidgetsBinding.instance?.addPostFrameCallback(
+          (_) => {_memokaKey.currentState!.shuffleBack()});
+    });
+
+    setState(() {});
+  }
+
   Memoka instanceMemoka(MemokaStatus memokaStatus) {
     return Memoka(
-      key: GlobalKey(),
+      key: _memokaKey,
       front: _memokaData.getFrontValue(),
       back: _memokaData.getBackValue(),
       page: _memokaData.getPage(),
       status: memokaStatus,
       nextCallback: nextCallback,
       previousCallback: _previousCallback,
+      shuffleMiddleCallback: _shuffleMiddleCallback,
+      shuffleEndCallback: _shuffleEndCallback,
     );
   }
 
   Widget _topBar() {
-    return Container(
+    return SizedBox(
       height: 56,
       child: Row(
         children: [
@@ -118,7 +160,9 @@ class _MemokaBodyState extends State<MemokaBody> {
   Widget _shuffleIcon() {
     return IconButton(
       icon: Image.asset('assets/moca_icon/shuffle.png'),
-      onPressed: () {},
+      onPressed: () {
+        _shuffle();
+      },
     );
   }
 }

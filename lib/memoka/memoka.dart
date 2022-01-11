@@ -12,6 +12,8 @@ class Memoka extends StatefulWidget {
   final MemokaStatus status;
   final VoidCallback nextCallback;
   final VoidCallback previousCallback;
+  final VoidCallback shuffleMiddleCallback;
+  final VoidCallback shuffleEndCallback;
 
   const Memoka({
     Key? key,
@@ -21,6 +23,8 @@ class Memoka extends StatefulWidget {
     required this.status,
     required this.nextCallback,
     required this.previousCallback,
+    required this.shuffleMiddleCallback,
+    required this.shuffleEndCallback,
   }) : super(key: key);
 
   @override
@@ -47,6 +51,11 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   /// 되돌아오는 컨트롤러
   late AnimationController _returnController;
   late Animation<Alignment> _returnAnimation;
+
+  /// 셔플 컨트롤러
+  late AnimationController _shuffleFrontController;
+  late AnimationController _shuffleBackController;
+  bool isShuffleMidle = false;
 
   late Widget frontWidget;
   late Widget backWidget;
@@ -117,6 +126,24 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
         _dragAlignment = _returnAnimation.value;
       });
     });
+
+    _shuffleFrontController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    _shuffleFrontController.addListener(() {
+      if (_shuffleFrontController.value >= 0.6 && !isShuffleMidle) {
+        isShuffleMidle = true;
+        widget.shuffleMiddleCallback();
+      }
+      if (_shuffleFrontController.isCompleted) {
+        widget.shuffleEndCallback();
+      }
+      setState(() {});
+    });
+    _shuffleBackController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    _shuffleBackController.addListener(() {
+      setState(() {});
+    });
   }
 
   void _initAlignment() {
@@ -146,7 +173,7 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
       child: GestureDetector(
         child: Align(
           alignment: _dragAlignment,
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
             height: MediaQuery.of(context).size.width * 0.8 * 1.4,
             child: Stack(
@@ -167,19 +194,6 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
                   right: 30,
                   bottom: 30,
                 ),
-                // 첫페이지 표시
-                // Positioned(
-                //   child: Visibility(
-                //     child: Container(
-                //       color: Colors.red,
-                //       width: 10,
-                //       height: 40,
-                //     ),
-                //     visible: isTopPage(),
-                //   ),
-                // top: -20,
-                //   right: 10,
-                // )
               ],
             ),
           ),
@@ -220,7 +234,7 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   }
 
   Matrix4 _rotation() {
-    // debugPrint(_controller.value.toString());
+    debugPrint(_rotationController.value.toString());
     if (_rotationController.value >= 0.5) {
       contents = backWidget;
       return Matrix4.identity()
@@ -242,6 +256,79 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
       } else {
         _rotationController.reverse();
       }
+    });
+  }
+
+  Matrix4 _shuffleFrontMatrix() {
+    // debugPrint(_shuffleFrontController.value.toString());
+    double maxScaleFactor = 0.1;
+    double endScaleFactor = 0.8;
+    double diffScaleFactor = 0.4;
+    double translateFactor = -150;
+    if (_shuffleFrontController.value <= 0.2) {
+      double scaleFactor =
+          _shuffleFrontController.value * 10 / 2 * maxScaleFactor + 1;
+      return Matrix4.identity()
+        ..setEntry(0, 0, scaleFactor)
+        ..setEntry(1, 1, scaleFactor);
+    } else if (_shuffleFrontController.value <= 0.6) {
+      double scaleFactor = (1 + maxScaleFactor) -
+          ((_shuffleFrontController.value - 0.2) * 10 / 8) * 0.4;
+      return Matrix4.identity()
+        ..setEntry(0, 0, scaleFactor)
+        ..setEntry(1, 1, scaleFactor)
+        ..setEntry(0, 3,
+            (_shuffleFrontController.value - 0.2) / (0.4) * translateFactor);
+    } else {
+      double scaleFactor = (1 + maxScaleFactor) -
+          ((_shuffleFrontController.value - 0.2) * 10 / 8) * 0.4;
+      return Matrix4.identity()
+        ..setEntry(0, 0, scaleFactor)
+        ..setEntry(1, 1, scaleFactor)
+        ..setEntry(
+            0,
+            3,
+            (1 - (_shuffleFrontController.value - 0.6) / (0.4)) *
+                translateFactor);
+    }
+  }
+
+  Matrix4 _shuffleBackMatrix() {
+    // debugPrint(_shuffleFrontController.value.toString());
+    double translateFactor = 150;
+    if (_shuffleBackController.value <= 0.2) {
+      return Matrix4.identity();
+    } else if (_shuffleBackController.value <= 0.6) {
+      return Matrix4.identity()
+        ..setEntry(0, 3,
+            (_shuffleBackController.value - 0.2) / (0.4) * translateFactor);
+    } else {
+      return Matrix4.identity()
+        ..setEntry(
+            0,
+            3,
+            (1 - (_shuffleBackController.value - 0.6) / (0.4)) *
+                translateFactor);
+    }
+  }
+
+  void shuffleFront() {
+    _transformer = _shuffleFrontMatrix;
+    setState(() {
+      if (_shuffleFrontController.value != 0) {
+        _shuffleFrontController.reset();
+      }
+      _shuffleFrontController.forward();
+    });
+  }
+
+  void shuffleBack() {
+    _transformer = _shuffleBackMatrix;
+    setState(() {
+      if (_shuffleBackController.value != 0) {
+        _shuffleBackController.reset();
+      }
+      _shuffleBackController.forward();
     });
   }
 
