@@ -125,6 +125,27 @@ class _MemokaBodyState extends State<MemokaBody> {
     setState(() {});
   }
 
+  void _straight() async {
+    _isShuffleBusy = true;
+    _previousMemoka = _memoka;
+    _previousMemokaKey = _memokaKey;
+    _memokaKey = GlobalKey();
+    _memokaData.straightMemoka();
+    _memokaData.setIndexMemoka(0);
+    _memoka = instanceMemoka(MemokaStatus.init);
+    _memokaArray.insert(0, _memoka);
+
+    /// 해결하기위해 1frame을 skip하고 빌드를 다시함
+    Future.delayed(const Duration(milliseconds: 16), () {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        _previousMemokaKey!.currentState!.shuffleFront();
+        _memokaKey.currentState!.shuffleBack();
+      });
+    });
+
+    setState(() {});
+  }
+
   Memoka instanceMemoka(MemokaStatus memokaStatus) {
     return Memoka(
       key: _memokaKey,
@@ -164,7 +185,9 @@ class _MemokaBodyState extends State<MemokaBody> {
   Widget _starigtIcon() {
     return IconButton(
       icon: Image.asset('assets/moca_icon/straight.png'),
-      onPressed: () {},
+      onPressed: () {
+        if (!_isShuffleBusy) _straight();
+      },
     );
   }
 

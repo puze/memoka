@@ -1,3 +1,4 @@
+import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 
 class MemokaGroupData {
@@ -37,9 +38,13 @@ class MemokaGroupData {
 
   void shuffleMemoka() {
     _memokaData.memokaData.shuffle();
+    DataManager().saveData();
   }
 
-  void straightMemoka() {}
+  void straightMemoka() {
+    _memokaData.memokaData.sort((a, b) => a.index.compareTo(b.index));
+    DataManager().saveData();
+  }
 
   String getFrontValue() {
     return _memokaData.memokaData[_currentIndex].front;
@@ -50,6 +55,7 @@ class MemokaGroupData {
   }
 
   int getPage() {
-    return _currentIndex;
+    // 1페이지부터 시작하기 위해
+    return _currentIndex + 1;
   }
 }

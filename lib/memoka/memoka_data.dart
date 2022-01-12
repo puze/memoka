@@ -51,18 +51,21 @@ class MemokaGroup {
 class MemokaData {
   late String front;
   late String back;
+  late int index;
 
-  MemokaData({required this.front, required this.back});
+  MemokaData({required this.front, required this.back, required this.index});
 
   MemokaData.fromJson(Map<String, dynamic> json) {
     front = json['front'];
     back = json['back'];
+    index = json['index'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['front'] = front;
     data['back'] = back;
+    data['index'] = index;
     return data;
   }
 }
