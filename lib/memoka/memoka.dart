@@ -34,6 +34,8 @@ class Memoka extends StatefulWidget {
 class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   final int _rotationTime = 200;
   final int _alignTime = 100;
+  final int _shuffleTime = 350;
+  final double _translateFactor = 150;
   // 드래그 임계치
   final double threshold = 30;
 
@@ -54,7 +56,9 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
 
   /// 셔플 컨트롤러
   late AnimationController _shuffleFrontController;
+  late Animation<double> _shuffleFrontAnimation;
   late AnimationController _shuffleBackController;
+  late Animation<double> _shuffleBackAnimation;
   bool isShuffleMidle = false;
 
   late Widget frontWidget;
@@ -66,6 +70,7 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   final Alignment _leftAlign = const Alignment(-10, 0);
 
   double _dx = 0;
+  int _blackFiltter = 255;
 
   @override
   void initState() {
@@ -127,21 +132,27 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
       });
     });
 
-    _shuffleFrontController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    _shuffleFrontController.addListener(() {
-      if (_shuffleFrontController.value >= 0.6 && !isShuffleMidle) {
-        isShuffleMidle = true;
-        widget.shuffleMiddleCallback();
-      }
-      if (_shuffleFrontController.isCompleted) {
-        widget.shuffleEndCallback();
-      }
-      setState(() {});
+    _shuffleFrontController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: _shuffleTime));
+    _shuffleFrontAnimation =
+        CurvedAnimation(curve: Curves.easeIn, parent: _shuffleFrontController);
+    _shuffleFrontAnimation.addListener(() {
+      // debugPrint(_shuffleFrontAnimation.value.toString());
+      setState(() {
+        if (_shuffleFrontAnimation.value >= 0.6 && !isShuffleMidle) {
+          isShuffleMidle = true;
+          widget.shuffleMiddleCallback();
+        }
+        if (_shuffleFrontAnimation.isCompleted) {
+          widget.shuffleEndCallback();
+        }
+      });
     });
-    _shuffleBackController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    _shuffleBackController.addListener(() {
+    _shuffleBackController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: _shuffleTime));
+    _shuffleBackAnimation =
+        CurvedAnimation(curve: Curves.easeIn, parent: _shuffleBackController);
+    _shuffleBackAnimation.addListener(() {
       setState(() {});
     });
   }
@@ -176,25 +187,31 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
             height: MediaQuery.of(context).size.width * 0.8 * 1.4,
-            child: Stack(
-              children: [
-                if (isTopPage())
-                  Image.asset('assets/moca_icon/memoka_first.png')
-                else
-                  Image.asset('assets/moca_icon/memoka.png'),
-                // 중앙 컨텐츠
-                Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: contents,
-                )),
-                // 오른쪽 하단 페이지 넘버
-                Positioned(
-                  child: Text(widget.page.toString()),
-                  right: 30,
-                  bottom: 30,
-                ),
-              ],
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                  Color.fromARGB(
+                      255, _blackFiltter, _blackFiltter, _blackFiltter),
+                  BlendMode.modulate),
+              child: Stack(
+                children: [
+                  if (isTopPage())
+                    Image.asset('assets/moca_icon/memoka_first.png')
+                  else
+                    Image.asset('assets/moca_icon/memoka.png'),
+                  // 중앙 컨텐츠
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: contents,
+                  )),
+                  // 오른쪽 하단 페이지 넘버
+                  Positioned(
+                    child: Text(widget.page.toString()),
+                    right: 30,
+                    bottom: 30,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -259,77 +276,109 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
     });
   }
 
+  final int _blackValue = 30;
   Matrix4 _shuffleFrontMatrix() {
     // debugPrint(_shuffleFrontController.value.toString());
-    double maxScaleFactor = 0.1;
-    double endScaleFactor = 0.8;
-    double diffScaleFactor = 0.4;
-    double translateFactor = -150;
-    if (_shuffleFrontController.value <= 0.2) {
+    double maxScaleFactor = -0.2;
+    Matrix4 matrix = Matrix4.identity();
+
+    // 사이즈 조절
+    double criticalSizeValue = 0.2;
+    if (_shuffleFrontAnimation.value <= criticalSizeValue) {
       double scaleFactor =
-          _shuffleFrontController.value * 10 / 2 * maxScaleFactor + 1;
-      return Matrix4.identity()
+          _shuffleFrontAnimation.value / criticalSizeValue * maxScaleFactor + 1;
+      matrix
         ..setEntry(0, 0, scaleFactor)
         ..setEntry(1, 1, scaleFactor);
-    } else if (_shuffleFrontController.value <= 0.6) {
-      double scaleFactor = (1 + maxScaleFactor) -
-          ((_shuffleFrontController.value - 0.2) * 10 / 8) * 0.4;
-      return Matrix4.identity()
+      _blackFiltter = 255 -
+          (_shuffleFrontAnimation.value / criticalSizeValue * _blackValue)
+              .toInt();
+    }
+    //위치 조종
+    else if (_shuffleFrontAnimation.value <= 0.6) {
+      double scaleFactor = maxScaleFactor + 1;
+      matrix
         ..setEntry(0, 0, scaleFactor)
         ..setEntry(1, 1, scaleFactor)
         ..setEntry(0, 3,
-            (_shuffleFrontController.value - 0.2) / (0.4) * translateFactor);
+            (_shuffleFrontAnimation.value - 0.2) / (0.4) * -_translateFactor);
+      _blackFiltter = 255 - _blackValue;
     } else {
-      double scaleFactor = (1 + maxScaleFactor) -
-          ((_shuffleFrontController.value - 0.2) * 10 / 8) * 0.4;
-      return Matrix4.identity()
+      double scaleFactor = maxScaleFactor + 1;
+      matrix
         ..setEntry(0, 0, scaleFactor)
         ..setEntry(1, 1, scaleFactor)
         ..setEntry(
             0,
             3,
-            (1 - (_shuffleFrontController.value - 0.6) / (0.4)) *
-                translateFactor);
+            (1 - (_shuffleFrontAnimation.value - 0.6) / (0.4)) *
+                -_translateFactor);
+      _blackFiltter = 255 - _blackValue;
     }
+
+    return matrix;
   }
 
   Matrix4 _shuffleBackMatrix() {
     // debugPrint(_shuffleFrontController.value.toString());
-    double translateFactor = 150;
-    if (_shuffleBackController.value <= 0.2) {
-      return Matrix4.identity();
-    } else if (_shuffleBackController.value <= 0.6) {
-      return Matrix4.identity()
-        ..setEntry(0, 3,
-            (_shuffleBackController.value - 0.2) / (0.4) * translateFactor);
+    double maxScaleFactor = -0.2;
+    Matrix4 matrix = Matrix4.identity();
+
+    // 사이즈 조절
+    double criticalSizeValue = 0.2;
+    if (_shuffleBackAnimation.value <= criticalSizeValue) {
+      double scaleFactor =
+          _shuffleBackAnimation.value / criticalSizeValue * maxScaleFactor + 1;
+      matrix
+        ..setEntry(0, 0, scaleFactor)
+        ..setEntry(1, 1, scaleFactor);
+      // 뒤로갈때 어두운 필터
+      _blackFiltter = 255 -
+          (_shuffleBackAnimation.value / criticalSizeValue * _blackValue)
+              .toInt();
     } else {
-      return Matrix4.identity()
-        ..setEntry(
-            0,
-            3,
-            (1 - (_shuffleBackController.value - 0.6) / (0.4)) *
-                translateFactor);
+      double scaleFactor = (_shuffleBackAnimation.value - criticalSizeValue) /
+              (1 - criticalSizeValue) *
+              0.2 +
+          0.8;
+      matrix
+        ..setEntry(0, 0, scaleFactor)
+        ..setEntry(1, 1, scaleFactor);
+      _blackFiltter = 255 -
+          (-(_shuffleBackAnimation.value - criticalSizeValue) /
+                      (1 - criticalSizeValue) *
+                      _blackValue +
+                  _blackValue)
+              .toInt();
+      debugPrint('balck filtter : $_blackFiltter');
     }
+
+    // 위치 조종
+    if (_shuffleBackAnimation.value <= criticalSizeValue) {
+    } else if (_shuffleBackAnimation.value <= 0.6) {
+      matrix.setEntry(
+          0, 3, (_shuffleBackAnimation.value - 0.2) / (0.4) * _translateFactor);
+    } else {
+      matrix.setEntry(0, 3,
+          (1 - (_shuffleBackAnimation.value - 0.6) / (0.4)) * _translateFactor);
+    }
+    return matrix;
   }
 
   void shuffleFront() {
     _transformer = _shuffleFrontMatrix;
-    setState(() {
-      if (_shuffleFrontController.value != 0) {
-        _shuffleFrontController.reset();
-      }
-      _shuffleFrontController.forward();
-    });
+    if (_shuffleFrontController.value != 0) {
+      _shuffleFrontController.reset();
+    }
+    _shuffleFrontController.forward();
   }
 
   void shuffleBack() {
     _transformer = _shuffleBackMatrix;
-    setState(() {
-      if (_shuffleBackController.value != 0) {
-        _shuffleBackController.reset();
-      }
-      _shuffleBackController.forward();
-    });
+    if (_shuffleBackController.value != 0) {
+      _shuffleBackController.reset();
+    }
+    _shuffleBackController.forward();
   }
 
   void _runReturnAnimation() {

@@ -26,6 +26,7 @@ class _MemokaBodyState extends State<MemokaBody> {
 
   bool goNext = false;
   bool goPrevious = false;
+  bool _isShuffleBusy = false;
 
   Offset onDragOffset = Offset.zero;
 
@@ -73,14 +74,20 @@ class _MemokaBodyState extends State<MemokaBody> {
   void nextCallback() {
     _memokaData.nextMemoka();
     setState(() {
+      _memokaArray.clear();
+      _memokaKey = GlobalKey();
       _memoka = instanceMemoka(MemokaStatus.next);
+      _memokaArray.add(_memoka);
     });
   }
 
   void _previousCallback() {
     _memokaData.previousMemoka();
     setState(() {
+      _memokaArray.clear();
+      _memokaKey = GlobalKey();
       _memoka = instanceMemoka(MemokaStatus.previous);
+      _memokaArray.add(_memoka);
     });
   }
 
@@ -92,23 +99,28 @@ class _MemokaBodyState extends State<MemokaBody> {
   }
 
   void _shuffleEndCallback() {
+    _isShuffleBusy = false;
     setState(() {
       _memokaArray.remove(_previousMemoka);
     });
   }
 
   void _shuffle() async {
+    _isShuffleBusy = true;
     _previousMemoka = _memoka;
     _previousMemokaKey = _memokaKey;
     _memokaKey = GlobalKey();
+    _memokaData.shuffleMemoka();
+    _memokaData.setIndexMemoka(0);
     _memoka = instanceMemoka(MemokaStatus.init);
     _memokaArray.insert(0, _memoka);
-    _previousMemokaKey!.currentState!.shuffleFront();
 
     /// 해결하기위해 1frame을 skip하고 빌드를 다시함
     Future.delayed(const Duration(milliseconds: 16), () {
-      WidgetsBinding.instance?.addPostFrameCallback(
-          (_) => {_memokaKey.currentState!.shuffleBack()});
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        _previousMemokaKey!.currentState!.shuffleFront();
+        _memokaKey.currentState!.shuffleBack();
+      });
     });
 
     setState(() {});
@@ -161,7 +173,7 @@ class _MemokaBodyState extends State<MemokaBody> {
     return IconButton(
       icon: Image.asset('assets/moca_icon/shuffle.png'),
       onPressed: () {
-        _shuffle();
+        if (!_isShuffleBusy) _shuffle();
       },
     );
   }

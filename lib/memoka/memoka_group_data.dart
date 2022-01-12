@@ -16,6 +16,10 @@ class MemokaGroupData {
     return _currentIndex == 0;
   }
 
+  void setIndexMemoka(int index) {
+    _currentIndex = index;
+  }
+
   void nextMemoka() {
     if (_currentIndex + 1 < _memokaData.memokaData.length) {
       _currentIndex++;
@@ -31,6 +35,12 @@ class MemokaGroupData {
       _currentIndex = _memokaData.memokaData.length - 1;
     }
   }
+
+  void shuffleMemoka() {
+    _memokaData.memokaData.shuffle();
+  }
+
+  void straightMemoka() {}
 
   String getFrontValue() {
     return _memokaData.memokaData[_currentIndex].front;
