@@ -4,8 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:memoka/data_manager.dart';
-import 'package:memoka/license_route.dart';
-import 'package:memoka/listener_outside_tap.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 
 import 'memoka/memoka_cover.dart';
@@ -40,10 +38,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isBusy = false;
   File? _currentFile;
-  String? _pickedFilePath;
-  List<GlobalKey<MemokaCoverState>> _memokaKeyList = [];
+  final List<GlobalKey<MemokaCoverState>> _memokaKeyList = [];
   bool _isMemokaRemoveIcon = false;
   Widget _removeMemokaIcon = Container();
   Widget _removeCancelArea = Container();
@@ -110,9 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
             var memokaData = DataManager().memokaGroupList;
 
             /*24 is for notification bar on Android*/
-            var size = MediaQuery.of(context).size;
-            final double itemHeight = (size.height - kToolbarHeight - 24) / 8;
-            final double itemWidth = size.width / 2;
+            // var size = MediaQuery.of(context).size;
+            // final double itemHeight = (size.height - kToolbarHeight - 24) / 8;
+            // final double itemWidth = size.width / 2;
 
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -220,9 +216,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _isMemokaRemoveIcon = false;
       result = await FilePicker.platform
           .pickFiles(type: FileType.custom, allowedExtensions: ['xls', 'xlsx']);
-      print(result);
     } on PlatformException catch (e) {
-      print(e);
+      debugPrint(e.message);
     } finally {
       if (result != null) {
         _currentFile = File(result.files.single.path!);

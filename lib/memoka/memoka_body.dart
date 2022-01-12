@@ -1,6 +1,5 @@
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 import 'package:memoka/memoka/memoka_group_data.dart';

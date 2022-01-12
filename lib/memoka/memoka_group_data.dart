@@ -1,4 +1,3 @@
-import 'package:excel/excel.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 
 class MemokaGroupData {

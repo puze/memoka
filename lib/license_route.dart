@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show ByteData, rootBundle;
+import 'package:flutter/services.dart' show rootBundle;
 
 class LicenseRoute extends StatelessWidget {
   const LicenseRoute({Key? key}) : super(key: key);
