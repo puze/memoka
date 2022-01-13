@@ -1,15 +1,35 @@
 import 'dart:io';
 
+// import 'package:admob_flutter/admob_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka_data.dart';
+import 'package:memoka/tools/admob.dart';
 
 import 'memoka/memoka_cover.dart';
 import 'tools/theme_colors.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+
+// RewardedAd.load(
+//   adUnitId: 'ca-app-pub-7658460612630664/2348277849',
+//   request: AdRequest(),
+//   rewardedAdLoadCallback: RewardedAdLoadCallback(
+//     onAdLoaded: (RewardedAd ad) {
+//       print('$ad loaded.');
+//       // Keep a reference to the ad so you can show it later.
+//       this._rewardedAd = ad;
+//     },
+//     onAdFailedToLoad: (LoadAdError error) {
+//       print('RewardedAd failed to load: $error');
+//     },
+// );
+
   runApp(const MyApp());
 }
 
@@ -48,14 +68,32 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    Admob().initAdmob();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Admob().dispose();
   }
 
   Future<MemokaGroupList> initData() async {
-    if (DataManager().beenInit) return DataManager().memokaGroupList;
-    // 데이터메니저 초기화
-    var data = await DataManager().readData();
+    if (DataManager().beenInit) return DataManager().memokaGroupList!;
+    // 데이터 매니저 초기화
+    MemokaGroupList? data = await DataManager().readData();
+    welcomeRoutine(data);
     _refreshKeyList();
-    return data;
+    return data!;
+  }
+
+  void welcomeRoutine(MemokaGroupList? data) {
+    if (data!.welcome != 'true') {
+      data.welcome = 'true';
+      data.coin = '3';
+      debugPrint('Wellcome to memoca');
+    }
+
+    debugPrint('coin : ' + data.coin);
   }
 
   @override
@@ -116,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisSpacing: entirePadding,
                   mainAxisSpacing: entirePadding,
                   childAspectRatio: 1.2),
-              itemCount: memokaData.memokaGroups.length,
+              itemCount: memokaData!.memokaGroups.length,
               itemBuilder: (context, index) {
                 String cover = memokaData.memokaGroups[index].memokaCover;
                 return GestureDetector(
@@ -144,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _refreshKeyList() {
     _memokaKeyList.clear();
-    for (var _ in DataManager().memokaGroupList.memokaGroups) {
+    for (var _ in DataManager().memokaGroupList!.memokaGroups) {
       _memokaKeyList.add(GlobalKey<MemokaCoverState>());
     }
   }
@@ -205,8 +243,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
   }
 
-  // 외부파일 불러오기
+  /// 외부파일 불러오기
   Future<void> _pickFile() async {
+    // 코인이 없을 경우 광고 시청
+    int coin = int.parse(DataManager().memokaGroupList!.coin);
+    if (coin <= 0) {
+      Admob().showRewardedAd();
+      return;
+    }
+
     FilePickerResult? result;
     try {
       // setState(() {
@@ -222,6 +267,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if (result != null) {
         _currentFile = File(result.files.single.path!);
         var excelFile = DataManager().readExternalFile(_currentFile!);
+        // addExcelData에서 데이터저장
+        DataManager().memokaGroupList!.coin = (coin - 1).toString();
+        debugPrint('coin : ' + DataManager().memokaGroupList!.coin);
         await DataManager().addExcelData(excelFile);
       } else {
         // User canceled the picker

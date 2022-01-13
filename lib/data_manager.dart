@@ -11,7 +11,7 @@ import 'memoka/memoka_data.dart';
 
 class DataManager {
   static final DataManager _instance = DataManager._internal();
-  MemokaGroupList memokaGroupList = MemokaGroupList(memokaGroups: []);
+  MemokaGroupList? memokaGroupList;
   bool beenInit = false;
 
   late Excel excelData;
@@ -47,20 +47,13 @@ class DataManager {
     return File('$path/data.json');
   }
 
-  Future<File> writeData(String data) async {
-    final file = await _localFile;
-
-    // 파일 쓰기
-    return file.writeAsString(data);
-  }
-
   Future<void> saveData() async {
     final file = await _localFile;
 
     file.writeAsString(jsonEncode(memokaGroupList));
   }
 
-  Future<MemokaGroupList> readData() async {
+  Future<MemokaGroupList?> readData() async {
     try {
       final file = await _localFile;
 
@@ -85,7 +78,7 @@ class DataManager {
     // table : sheet name
     for (var table in excel.tables.keys) {
       var memokaGroup = MemokaGroup(memokaCover: table, memokaData: []);
-      memokaGroupList.memokaGroups.add(memokaGroup);
+      memokaGroupList!.memokaGroups.add(memokaGroup);
       debugPrint('sheet name : $table'); //sheet Name
       // print(excel.tables[table]?.maxCols);
       // print(excel.tables[table]?.maxRows);
@@ -105,11 +98,13 @@ class DataManager {
     final file = await _localFile;
     file.create();
     var assetData = await readAssetFile();
+    memokaGroupList =
+        MemokaGroupList(coin: '5', welcome: 'false', memokaGroups: []);
     await addExcelData(assetData);
   }
 
   Future<void> removeMemokaGroup(MemokaGroup memokaGroup) async {
-    memokaGroupList.memokaGroups.remove(memokaGroup);
+    memokaGroupList!.memokaGroups.remove(memokaGroup);
     await saveData();
   }
 }

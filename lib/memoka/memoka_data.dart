@@ -3,10 +3,15 @@ import 'package:json_annotation/json_annotation.dart';
 @JsonSerializable(explicitToJson: true)
 class MemokaGroupList {
   late List<MemokaGroup> memokaGroups;
+  late String coin;
+  late String welcome;
 
-  MemokaGroupList({required this.memokaGroups});
+  MemokaGroupList(
+      {required this.memokaGroups, required this.coin, required this.welcome});
 
   MemokaGroupList.fromJson(Map<String, dynamic> json) {
+    coin = json['coin'];
+    welcome = json['welcome'];
     if (json['memoka_group'] != null) {
       memokaGroups = [];
       json['memoka_group'].forEach((v) {
@@ -17,6 +22,8 @@ class MemokaGroupList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['coin'] = coin;
+    data['welcome'] = welcome;
     data['memoka_group'] = memokaGroups.map((v) => v.toJson()).toList();
     return data;
   }

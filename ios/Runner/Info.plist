@@ -43,5 +43,11 @@
 		<false/>
 		<key>UIStatusBarHidden</key>
 		<true/>
+		<key>ca-app-pub-7658460612630664~5390918748</key>
+		<string>ca-app-pub-7658460612630664/2348277849</string>
+		<key>io.flutter.embedded_views_preview</key>
+		<true/>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>This identifier will be used to deliver personalized ads to you.</string>
 	</dict>
 </plist>
