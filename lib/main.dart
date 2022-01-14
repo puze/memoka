@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka_data.dart';
+import 'package:memoka/settings.dart';
 import 'package:memoka/tools/admob.dart';
 
 import 'memoka/memoka_cover.dart';
@@ -69,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Admob().initAdmob();
+    welcomeRoutine(DataManager().memokaGroupList);
   }
 
   @override
@@ -81,12 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
     if (DataManager().beenInit) return DataManager().memokaGroupList!;
     // 데이터 매니저 초기화
     MemokaGroupList? data = await DataManager().readData();
-    welcomeRoutine(data);
     _refreshKeyList();
     return data!;
   }
 
-  void welcomeRoutine(MemokaGroupList? data) {
+  Stream<void> welcomeRoutine(MemokaGroupList? data) async* {
+    // 초기화 대기
+    while (!DataManager().beenInit) {
+      yield 0;
+    }
+
     if (data!.welcome != 'true') {
       data.welcome = 'true';
       data.coin = '3';
@@ -126,8 +132,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: RawMaterialButton(
-        onPressed: _pickFile,
-        child: Image.asset('assets/moca_icon/add.png'),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return const SettingsRoute();
+            },
+          ));
+        },
+        child: const Icon(Icons.settings),
         constraints: const BoxConstraints(
             minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
       ),
@@ -154,26 +166,33 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisSpacing: entirePadding,
                   mainAxisSpacing: entirePadding,
                   childAspectRatio: 1.2),
-              itemCount: memokaData!.memokaGroups.length,
+              //+1은 추가 버튼
+              itemCount: memokaData!.memokaGroups.length + 1,
               itemBuilder: (context, index) {
-                String cover = memokaData.memokaGroups[index].memokaCover;
-                return GestureDetector(
-                  child: MemokaCover(
-                    key: _memokaKeyList[index],
-                    coverText: cover,
-                    memokaGroup: memokaData.memokaGroups[index],
-                  ),
-                  onLongPress: () {
-                    _isMemokaRemoveIcon = true;
-                    _memokaKeyList[index]
-                        .currentState!
-                        .onLongPressMemokaCover();
-                    _setRemoveMemokaIcon(
-                        context, memokaData.memokaGroups[index], index);
-                    _setRemoveCancelArea(
-                        context, _memokaKeyList[index].currentState!);
-                  },
-                );
+                if (index == 0) {
+                  return _addMemokaIcon();
+                } else {
+                  int memokaIndex = index - 1;
+                  String cover =
+                      memokaData.memokaGroups[memokaIndex].memokaCover;
+                  return GestureDetector(
+                    child: MemokaCover(
+                      key: _memokaKeyList[memokaIndex],
+                      coverText: cover,
+                      memokaGroup: memokaData.memokaGroups[memokaIndex],
+                    ),
+                    onLongPress: () {
+                      _isMemokaRemoveIcon = true;
+                      _memokaKeyList[memokaIndex]
+                          .currentState!
+                          .onLongPressMemokaCover();
+                      _setRemoveMemokaIcon(context,
+                          memokaData.memokaGroups[memokaIndex], memokaIndex);
+                      _setRemoveCancelArea(
+                          context, _memokaKeyList[memokaIndex].currentState!);
+                    },
+                  );
+                }
               },
             );
           }
@@ -280,5 +299,12 @@ class _MyHomePageState extends State<MyHomePage> {
         _refreshKeyList();
       });
     }
+  }
+
+  Widget _addMemokaIcon() {
+    return RawMaterialButton(
+      onPressed: _pickFile,
+      child: Image.asset('assets/moca_icon/add_memoka.png'),
+    );
   }
 }
