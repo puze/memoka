@@ -26,6 +26,8 @@ class MemokaGroupData {
     } else {
       _currentIndex = 0;
     }
+    _memokaData.lastPage = _currentIndex.toString();
+    DataManager().saveData();
   }
 
   void previousMemoka() {
@@ -34,6 +36,8 @@ class MemokaGroupData {
     } else {
       _currentIndex = _memokaData.memokaData.length - 1;
     }
+    _memokaData.lastPage = _currentIndex.toString();
+    DataManager().saveData();
   }
 
   void shuffleMemoka() {
@@ -56,6 +60,10 @@ class MemokaGroupData {
 
   int getPage() {
     // 1페이지부터 시작하기 위해
-    return _currentIndex + 1;
+    return _memokaData.memokaData[_currentIndex].index;
+  }
+
+  void setLastPage() {
+    _currentIndex = int.parse(_memokaData.lastPage);
   }
 }

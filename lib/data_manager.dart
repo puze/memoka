@@ -77,17 +77,18 @@ class DataManager {
   Future<void> addExcelData(Excel excel) async {
     // table : sheet name
     for (var table in excel.tables.keys) {
-      var memokaGroup = MemokaGroup(memokaCover: table, memokaData: []);
+      var memokaGroup =
+          MemokaGroup(memokaCover: table, lastPage: '0', memokaData: []);
       memokaGroupList!.memokaGroups.add(memokaGroup);
       debugPrint('sheet name : $table'); //sheet Name
       // print(excel.tables[table]?.maxCols);
       // print(excel.tables[table]?.maxRows);
       int index = 0;
       for (var row in excel.tables[table]!.rows) {
-        index++;
         MemokaData memokaData =
             MemokaData(front: row[0]?.value, back: row[1]?.value, index: index);
         memokaGroup.memokaData.add(memokaData);
+        index++;
         // debugPrint("$row");
       }
     }

@@ -40,6 +40,7 @@ class _MemokaBodyState extends State<MemokaBody> {
 
   void initMemokaBody() {
     _memokaData = MemokaGroupData(widget.memokaGroup);
+    _memokaData.setLastPage();
     _memoka = instanceMemoka(MemokaStatus.init);
     _memokaArray.add(_memoka);
 

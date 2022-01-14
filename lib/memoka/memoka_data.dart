@@ -32,12 +32,17 @@ class MemokaGroupList {
 @JsonSerializable(explicitToJson: true)
 class MemokaGroup {
   late String memokaCover;
+  late String lastPage;
   late List<MemokaData> memokaData;
 
-  MemokaGroup({required this.memokaCover, required this.memokaData});
+  MemokaGroup(
+      {required this.memokaCover,
+      required this.memokaData,
+      required this.lastPage});
 
   MemokaGroup.fromJson(Map<String, dynamic> json) {
     memokaCover = json['memoka_cover'];
+    lastPage = json['last_page'];
     if (json['memoka_data'] != null) {
       memokaData = <MemokaData>[];
       json['memoka_data'].forEach((v) {
@@ -49,6 +54,7 @@ class MemokaGroup {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['memoka_cover'] = memokaCover;
+    data['last_page'] = lastPage;
     data['memoka_data'] = memokaData.map((v) => v.toJson()).toList();
     return data;
   }

@@ -206,7 +206,7 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
                   )),
                   // 오른쪽 하단 페이지 넘버
                   Positioned(
-                    child: Text(widget.page.toString()),
+                    child: Text((widget.page + 1).toString()),
                     right: 30,
                     bottom: 30,
                   ),
