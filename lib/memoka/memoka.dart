@@ -9,6 +9,7 @@ class Memoka extends StatefulWidget {
   final String front;
   final String back;
   final int page;
+  final bool isTopPage;
   final MemokaStatus status;
   final VoidCallback nextCallback;
   final VoidCallback previousCallback;
@@ -25,6 +26,7 @@ class Memoka extends StatefulWidget {
     required this.previousCallback,
     required this.shuffleMiddleCallback,
     required this.shuffleEndCallback,
+    required this.isTopPage,
   }) : super(key: key);
 
   @override
@@ -425,6 +427,6 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   }
 
   bool isTopPage() {
-    return widget.page == 0;
+    return widget.isTopPage;
   }
 }

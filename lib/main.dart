@@ -119,16 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
       //   ],
       // ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(entirePadding, 0, entirePadding, 0),
-          child: Stack(
-            children: [
-              _memokaFutureBuilder(),
-              Visibility(
-                  visible: _isMemokaRemoveIcon, child: _removeCancelArea),
-              Visibility(visible: _isMemokaRemoveIcon, child: _removeMemokaIcon)
-            ],
-          ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            _memokaFutureBuilder(),
+            Visibility(visible: _isMemokaRemoveIcon, child: _removeCancelArea),
+            Visibility(visible: _isMemokaRemoveIcon, child: _removeMemokaIcon)
+          ],
         ),
       ),
       floatingActionButton: RawMaterialButton(
@@ -165,7 +162,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisCount: 2,
                   crossAxisSpacing: entirePadding,
                   mainAxisSpacing: entirePadding,
-                  childAspectRatio: 1.2),
+                  childAspectRatio: 264 / 193),
+              padding: EdgeInsets.all(entirePadding),
               //+1은 추가 버튼
               itemCount: memokaData!.memokaGroups.length + 1,
               itemBuilder: (context, index) {

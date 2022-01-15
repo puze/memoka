@@ -154,6 +154,7 @@ class _MemokaBodyState extends State<MemokaBody> {
       back: _memokaData.getBackValue(),
       page: _memokaData.getPage(),
       status: memokaStatus,
+      isTopPage: _memokaData.isFirstMemoka(),
       nextCallback: nextCallback,
       previousCallback: _previousCallback,
       shuffleMiddleCallback: _shuffleMiddleCallback,

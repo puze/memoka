@@ -32,7 +32,7 @@ class MemokaCoverState extends State<MemokaCover> {
             ColorFiltered(
               colorFilter: isRemoveButtonVisibility
                   ? const ColorFilter.mode(
-                      Color.fromARGB(255, 100, 100, 100), BlendMode.modulate)
+                      Color.fromARGB(255, 180, 180, 180), BlendMode.modulate)
                   : const ColorFilter.mode(
                       Color.fromARGB(0, 0, 0, 0), BlendMode.dst),
               child:
