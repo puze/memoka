@@ -8,7 +8,10 @@ class MemokaGroupList {
   late String addMemokaAdRemove;
 
   MemokaGroupList(
-      {required this.memokaGroups, required this.coin, required this.welcome});
+      {required this.memokaGroups,
+      required this.coin,
+      required this.welcome,
+      required this.addMemokaAdRemove});
 
   MemokaGroupList.fromJson(Map<String, dynamic> json) {
     coin = json['coin'] ?? '';

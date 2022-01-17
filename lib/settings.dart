@@ -112,8 +112,10 @@ class _SettingsRouteState extends State<SettingsRoute> {
         await InAppPurchase.instance
             .buyNonConsumable(purchaseParam: purchaseParam);
       } else {
-        Navigator.push(context,
-            PopupDialog(message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.'));
+        Navigator.push(
+            context,
+            PopupDialog(
+                message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.\ncode:3'));
       }
     }, '추가 메모카 광고 제거');
   }

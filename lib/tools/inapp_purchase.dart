@@ -41,8 +41,10 @@ class MyInappPurchase {
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
           // _handleError(purchaseDetails.error!);
-          Navigator.push(_context,
-              PopupDialog(message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.'));
+          Navigator.push(
+              _context,
+              PopupDialog(
+                  message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.\ncode:1'));
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
             purchaseDetails.status == PurchaseStatus.restored) {
           bool valid = await _verifyPurchase(purchaseDetails);
@@ -50,8 +52,10 @@ class MyInappPurchase {
             _deliverProduct(purchaseDetails);
           } else {
             // _handleInvalidPurchase(purchaseDetails);
-            Navigator.push(_context,
-                PopupDialog(message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.'));
+            Navigator.push(
+                _context,
+                PopupDialog(
+                    message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.\ncode:2'));
           }
         }
         if (purchaseDetails.pendingCompletePurchase) {
@@ -67,6 +71,7 @@ class MyInappPurchase {
         debugPrint('purchase : add_memoka_ad_remove');
         DataManager().memokaGroupList!.addMemokaAdRemove =
             DataManager.adRemoveTrueValue;
+        DataManager().saveData();
         return true;
     }
     return false;

@@ -100,8 +100,11 @@ class DataManager {
     final file = await _localFile;
     file.create();
     var assetData = await readAssetFile();
-    memokaGroupList =
-        MemokaGroupList(coin: '5', welcome: 'false', memokaGroups: []);
+    memokaGroupList = MemokaGroupList(
+        coin: '5',
+        welcome: 'false',
+        addMemokaAdRemove: 'false',
+        memokaGroups: []);
     await addExcelData(assetData);
   }
 
