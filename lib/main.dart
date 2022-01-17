@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
         future: initData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData == false) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else {
             var memokaData = DataManager().memokaGroupList;
 
@@ -265,11 +265,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// 외부파일 불러오기
   Future<void> _pickFile() async {
-    // 코인이 없을 경우 광고 시청
     int coin = int.parse(DataManager().memokaGroupList!.coin);
-    if (coin <= 0) {
-      Admob().showRewardedAd();
-      return;
+    // 광고제거 모드시 건너뜀
+    if (!DataManager().isRemoveAds()) {
+      // 코인이 없을 경우 광고 시청
+      if (coin <= 0) {
+        Admob().showRewardedAd();
+        return;
+      }
     }
 
     FilePickerResult? result;

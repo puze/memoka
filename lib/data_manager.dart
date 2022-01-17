@@ -11,6 +11,7 @@ import 'memoka/memoka_data.dart';
 
 class DataManager {
   static final DataManager _instance = DataManager._internal();
+  static const adRemoveTrueValue = 'true';
   MemokaGroupList? memokaGroupList;
   bool beenInit = false;
 
@@ -107,5 +108,9 @@ class DataManager {
   Future<void> removeMemokaGroup(MemokaGroup memokaGroup) async {
     memokaGroupList!.memokaGroups.remove(memokaGroup);
     await saveData();
+  }
+
+  bool isRemoveAds() {
+    return memokaGroupList!.addMemokaAdRemove == adRemoveTrueValue;
   }
 }

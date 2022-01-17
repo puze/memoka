@@ -3,8 +3,10 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/tools/admob.dart';
 import 'package:memoka/tools/inapp_purchase.dart';
+import 'package:memoka/tools/popup_dialog.dart';
 import 'package:memoka/tools/theme_colors.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:collection/collection.dart';
 
 import 'license_route.dart';
 
@@ -17,10 +19,21 @@ class SettingsRoute extends StatefulWidget {
 
 class _SettingsRouteState extends State<SettingsRoute> {
   Widget versionWidget = Text('');
+  String coinValue = 'Coin : 0';
   @override
   void initState() {
     _loadVersionWidget();
+    _refreashCoinValue();
     super.initState();
+  }
+
+  void _refreashCoinValue() {
+    if (DataManager().memokaGroupList!.addMemokaAdRemove ==
+        DataManager.adRemoveTrueValue) {
+      coinValue = '광고가 제거 되었습니다.';
+    } else {
+      coinValue = 'Coin : ' + DataManager().memokaGroupList!.coin;
+    }
   }
 
   @override
@@ -46,7 +59,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
                   flex: 1,
                   child: Center(
                     child: Text(
-                      'Coin : ' + DataManager().memokaGroupList!.coin,
+                      coinValue,
                       style: const TextStyle(fontSize: 20),
                     ),
                   )),
@@ -91,12 +104,24 @@ class _SettingsRouteState extends State<SettingsRoute> {
   Widget _purchaseAddMemoka() {
     return _listItem(() async {
       var productDetails = MyInappPurchase().productDetails;
-      final PurchaseParam purchaseParam = PurchaseParam(
-          productDetails: productDetails
-              .firstWhere((element) => element.id == 'add_memoka_ad_remove'));
-      await InAppPurchase.instance
-          .buyNonConsumable(purchaseParam: purchaseParam);
-    }, '추가 메모카 광고 제거 : ' + MyInappPurchase().productDetails.length.toString());
+      ProductDetails? product = productDetails
+          .firstWhereOrNull((element) => element.id == 'add_memoka_ad_remove');
+      if (product != null) {
+        final PurchaseParam purchaseParam =
+            PurchaseParam(productDetails: product);
+        await InAppPurchase.instance
+            .buyNonConsumable(purchaseParam: purchaseParam);
+      } else {
+        Navigator.push(context,
+            PopupDialog(message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.'));
+      }
+    }, '추가 메모카 광고 제거');
+  }
+
+  Widget _testWidget() {
+    return _listItem(() {
+      Navigator.push(context, PopupDialog(message: 'test page'));
+    }, 'test item');
   }
 
   Widget _listItem(VoidCallback onClick, String itemName) {
@@ -119,8 +144,9 @@ class _SettingsRouteState extends State<SettingsRoute> {
     String version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
     setState(() {
-      versionWidget =
-          Text('version : ' + version + '\nbuild Number : ' + buildNumber);
+      versionWidget = Center(
+          child:
+              Text('version : ' + version + '\nbuild Number : ' + buildNumber));
     });
   }
 }
