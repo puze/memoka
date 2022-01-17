@@ -11,6 +11,7 @@ import 'package:memoka/settings.dart';
 import 'package:memoka/tools/admob.dart';
 
 import 'memoka/memoka_cover.dart';
+import 'tools/inapp_purchase.dart';
 import 'tools/theme_colors.dart';
 
 void main() {
@@ -70,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Admob().initAdmob();
+    MyInappPurchase().fetch();
     welcomeRoutine(DataManager().memokaGroupList);
   }
 
@@ -77,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     super.dispose();
     Admob().dispose();
+    MyInappPurchase().dispose();
   }
 
   Future<MemokaGroupList> initData() async {
