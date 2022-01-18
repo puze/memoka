@@ -29,18 +29,21 @@ class MemokaCoverState extends State<MemokaCover> {
         child: GestureDetector(
           child: Stack(alignment: Alignment.center, children: [
             // 메모카 삭제버튼 활성시 메모카 커버 어둡게함
-            ColorFiltered(
-              colorFilter: isRemoveButtonVisibility
-                  ? const ColorFilter.mode(
-                      Color.fromARGB(255, 180, 180, 180), BlendMode.modulate)
-                  : const ColorFilter.mode(
-                      Color.fromARGB(0, 0, 0, 0), BlendMode.dst),
-              child:
-                  // Container(
-                  //   color: Colors.pink,
-                  // )
-                  Image.asset(
-                'assets/moca_icon/cover.png',
+            Positioned.fill(
+              child: ColorFiltered(
+                colorFilter: isRemoveButtonVisibility
+                    ? const ColorFilter.mode(
+                        Color.fromARGB(255, 180, 180, 180), BlendMode.modulate)
+                    : const ColorFilter.mode(
+                        Color.fromARGB(0, 0, 0, 0), BlendMode.dst),
+                child:
+                    // Container(
+                    //   color: Colors.pink,
+                    // )
+                    Image.asset(
+                  'assets/moca_icon/cover.png',
+                  fit: BoxFit.fitWidth,
+                ),
               ),
             ),
             Text(widget.coverText),

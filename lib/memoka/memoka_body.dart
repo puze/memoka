@@ -57,18 +57,62 @@ class _MemokaBodyState extends State<MemokaBody> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: ThemeColors().backgroundColor,
-        body: SafeArea(
-          child: Column(
-            children: [
-              _topBar(),
-              Expanded(
-                  child: Stack(
-                alignment: Alignment.center,
-                children: _memokaArray,
-              ))
-            ],
+        body: SafeArea(child: _bodyWidget()));
+  }
+
+  Widget _bodyWidget() {
+    var size = MediaQuery.of(context).size;
+    if (size.width < size.height) {
+      return Column(
+        children: [
+          SizedBox(
+            height: 56,
+            child: Row(
+              children: [
+                Expanded(child: SizedBox(height: 40, child: _backIcon())),
+                Expanded(child: SizedBox(height: 40, child: _straigtIcon())),
+                Expanded(child: SizedBox(height: 40, child: _shuffleIcon()))
+              ],
+            ),
           ),
-        ));
+          Expanded(
+              child: Stack(
+            alignment: Alignment.center,
+            children: _memokaArray,
+          )),
+          const SizedBox(
+            height: 10,
+          )
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          Expanded(
+              child: Stack(
+            alignment: Alignment.center,
+            children: _memokaArray,
+          )),
+          SizedBox(
+            width: 56,
+            child: Column(children: [
+              Expanded(
+                  child: SizedBox(
+                child: _backIcon(),
+              )),
+              Expanded(
+                  child: SizedBox(
+                child: _straigtIcon(),
+              )),
+              Expanded(
+                  child: SizedBox(
+                child: _shuffleIcon(),
+              ))
+            ]),
+          )
+        ],
+      );
+    }
   }
 
   void nextCallback() {
@@ -162,19 +206,6 @@ class _MemokaBodyState extends State<MemokaBody> {
     );
   }
 
-  Widget _topBar() {
-    return SizedBox(
-      height: 56,
-      child: Row(
-        children: [
-          Expanded(child: SizedBox(height: 40, child: _backIcon())),
-          Expanded(child: SizedBox(height: 40, child: _starigtIcon())),
-          Expanded(child: SizedBox(height: 40, child: _shuffleIcon()))
-        ],
-      ),
-    );
-  }
-
   Widget _backIcon() {
     return IconButton(
       icon: Image.asset('assets/moca_icon/back.png'),
@@ -184,7 +215,7 @@ class _MemokaBodyState extends State<MemokaBody> {
     );
   }
 
-  Widget _starigtIcon() {
+  Widget _straigtIcon() {
     return IconButton(
       icon: Image.asset('assets/moca_icon/straight.png'),
       onPressed: () {

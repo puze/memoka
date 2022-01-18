@@ -86,8 +86,10 @@ class DataManager {
       // print(excel.tables[table]?.maxRows);
       int index = 0;
       for (var row in excel.tables[table]!.rows) {
-        MemokaData memokaData =
-            MemokaData(front: row[0]?.value, back: row[1]?.value, index: index);
+        MemokaData memokaData = MemokaData(
+            front: row[0]?.value ?? '',
+            back: row[1]?.value ?? '',
+            index: index);
         memokaGroup.memokaData.add(memokaData);
         index++;
         // debugPrint("$row");

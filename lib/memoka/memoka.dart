@@ -178,7 +178,12 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    Offset memokaOffset;
+    if (size.width < size.height) {
+      memokaOffset = Offset(size.width * 0.8, size.width * 0.8 * 1.4);
+    } else {
+      memokaOffset = Offset(size.height * 0.8 / 1.4, size.height * 0.8);
+    }
     return Transform(
       transform: _transformer(),
       // alignment: FractionalOffset(-1, 1),
@@ -187,8 +192,8 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
         child: Align(
           alignment: _dragAlignment,
           child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.width * 0.8 * 1.4,
+            width: memokaOffset.dx,
+            height: memokaOffset.dy,
             child: ColorFiltered(
               colorFilter: ColorFilter.mode(
                   Color.fromARGB(

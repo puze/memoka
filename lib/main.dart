@@ -71,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Admob().initAdmob();
+    MyInappPurchase().setContext(context);
     MyInappPurchase().fetch();
     welcomeRoutine(DataManager().memokaGroupList);
   }
@@ -109,18 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ThemeColors().backgroundColor,
-      // appBar: AppBar(
-      //   actions: [
-      //     IconButton(
-      //         onPressed: () {
-      //           Navigator.push(
-      //               context,
-      //               MaterialPageRoute(
-      //                   builder: (context) => const LicenseRoute()));
-      //         },
-      //         icon: const Icon(Icons.settings))
-      //   ],
-      // ),
       body: SafeArea(
         child: Stack(
           alignment: Alignment.center,
@@ -183,6 +172,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       memokaGroup: memokaData.memokaGroups[memokaIndex],
                     ),
                     onLongPress: () {
+                      // 동시 입력 방지
+                      if (_isMemokaRemoveIcon) return;
                       _isMemokaRemoveIcon = true;
                       _memokaKeyList[memokaIndex]
                           .currentState!
@@ -219,11 +210,17 @@ class _MyHomePageState extends State<MyHomePage> {
         (MediaQuery.of(context).size.width - 3 * entirePadding) / 2 / 3;
     RenderBox? renderBox =
         _memokaKeyList[index].currentContext!.findRenderObject() as RenderBox;
+    double xOffset =
+        (MediaQuery.of(context).size.width - 3 * entirePadding) / 2;
+    double yOffset = renderBox.size.height / 2;
+    Offset offset = Offset(xOffset, yOffset);
     Offset position = renderBox.localToGlobal(Offset.zero);
     setState(() {
       _removeMemokaIcon = Positioned(
         // left: iconSize * calculateXPos(index),
-        left: position.dx + 2 * entirePadding,
+        left: position.dx +
+            (MediaQuery.of(context).size.width - 3 * entirePadding) / 4 -
+            iconSize / 2,
         // top: (MediaQuery.of(context).size.height - kToolbarHeight - 24) /
         //     8 *
         //     ((index / 2).floor() + 1 / 2),
