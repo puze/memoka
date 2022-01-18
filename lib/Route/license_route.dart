@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:memoka/tools/theme_colors.dart';
 
 class LicenseRoute extends StatelessWidget {
   const LicenseRoute({Key? key}) : super(key: key);
@@ -7,6 +8,7 @@ class LicenseRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ThemeColors.backgroundColor,
       body: FutureBuilder(
         future: loadFile(),
         builder: (context, snapshot) {

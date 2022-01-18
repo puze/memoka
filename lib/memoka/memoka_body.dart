@@ -56,7 +56,7 @@ class _MemokaBodyState extends State<MemokaBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ThemeColors().backgroundColor,
+        backgroundColor: ThemeColors.backgroundColor,
         body: SafeArea(child: _bodyWidget()));
   }
 

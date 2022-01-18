@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.grey,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -109,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ThemeColors().backgroundColor,
+      backgroundColor: ThemeColors.backgroundColor,
       body: SafeArea(
         child: Stack(
           alignment: Alignment.center,
@@ -128,7 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ));
         },
-        child: const Icon(Icons.settings),
+        child: SizedBox(
+            width: 50,
+            child: Image.asset('assets/moca_icon/setting_button.png')),
         constraints: const BoxConstraints(
             minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
       ),
@@ -218,26 +220,31 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _removeMemokaIcon = Positioned(
         // left: iconSize * calculateXPos(index),
-        left: position.dx +
-            (MediaQuery.of(context).size.width - 3 * entirePadding) / 4 -
-            iconSize / 2,
+        left: position.dx
+        // +
+        //     (MediaQuery.of(context).size.width - 3 * entirePadding) / 4 -
+        //     iconSize / 2
+        ,
         // top: (MediaQuery.of(context).size.height - kToolbarHeight - 24) /
         //     8 *
         //     ((index / 2).floor() + 1 / 2),
-        top: position.dy,
-        child: RawMaterialButton(
-          onPressed: () {
-            _refreshKeyList();
-            setState(() {
-              _isMemokaRemoveIcon = false;
-              DataManager().removeMemokaGroup(memokaGroup);
-            });
-          },
-          elevation: 2.0,
-          fillColor: Colors.white,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.remove),
-          constraints: BoxConstraints(minWidth: iconSize, minHeight: iconSize),
+        top: position.dy
+        // - iconSize / 2
+        ,
+        child: SizedBox(
+          width: iconSize,
+          height: iconSize,
+          child: RawMaterialButton(
+            onPressed: () {
+              _refreshKeyList();
+              setState(() {
+                _isMemokaRemoveIcon = false;
+                DataManager().removeMemokaGroup(memokaGroup);
+              });
+            },
+            elevation: 2.0,
+            child: Image.asset('assets/moca_icon/remove_memoca.png'),
+          ),
         ),
       );
     });

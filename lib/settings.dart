@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:memoka/Route/credits_route.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/tools/admob.dart';
 import 'package:memoka/tools/inapp_purchase.dart';
@@ -8,7 +9,7 @@ import 'package:memoka/tools/theme_colors.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:collection/collection.dart';
 
-import 'license_route.dart';
+import 'Route/license_route.dart';
 
 class SettingsRoute extends StatefulWidget {
   const SettingsRoute({Key? key}) : super(key: key);
@@ -40,52 +41,71 @@ class _SettingsRouteState extends State<SettingsRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: ThemeColors().backgroundColor,
-          // elevation: 0,
-          leading: MaterialButton(
+        elevation: 3,
+        backgroundColor: ThemeColors.backgroundColor,
+        // elevation: 0,
+        leading: MaterialButton(
             onPressed: () => Navigator.pop(context),
-            child: const Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            ),
-          )),
-      backgroundColor: ThemeColors().backgroundColor,
+            child: SizedBox(
+                height: 23, child: Image.asset('assets/moca_icon/back.png'))),
+        title: Text(
+          'Setting',
+          style: TextStyle(color: ThemeColors.textColor, fontSize: 23),
+        ),
+        centerTitle: true,
+      ),
+      backgroundColor: ThemeColors.backgroundColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: Text(
-                      coinValue,
-                      style: const TextStyle(fontSize: 20),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Expanded(
+                      flex: 1,
+                      child: Center(
+                        child: Text(
+                          coinValue,
+                          style: TextStyle(
+                              fontSize: 23,
+                              color: ThemeColors.textColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )),
+                  Container(
+                      height: 1, color: Color.fromARGB(100, 111, 118, 103)),
+                  Expanded(
+                    flex: 9,
+                    child: ListView(
+                      padding: const EdgeInsets.all(15),
+                      children: [
+                        _purchaseAddMemoka(),
+                        _watchAd(),
+                        _licnesItem(),
+                        _creditItem(),
+                      ],
                     ),
-                  )),
-              Container(
-                height: 1,
-                color: Colors.grey,
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 9,
-                child: ListView(
-                  children: [
-                    _purchaseAddMemoka(),
-                    _watchAd(),
-                    _licnesItem(context),
-                    versionWidget
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+            Positioned(bottom: 30, child: versionWidget)
+          ],
         ),
       ),
     );
   }
 
-  Widget _licnesItem(BuildContext context) {
+  // Widget _appBar() {
+  //   return Material(
+  //     elevation: 10,
+  //     child: Container(height: 56),
+  //   );
+  // }
+
+  Widget _licnesItem() {
     return _listItem(
       () {
         Navigator.push(context,
@@ -117,7 +137,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
             PopupDialog(
                 message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.\ncode:3'));
       }
-    }, '추가 메모카 광고 제거');
+    }, '메모카 광고 제거');
   }
 
   Widget _testWidget() {
@@ -126,15 +146,39 @@ class _SettingsRouteState extends State<SettingsRoute> {
     }, 'test item');
   }
 
+  Widget _creditItem() {
+    return _listItem(() {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) {
+          return const CreditsRoute();
+        },
+      ));
+    }, '만든이');
+  }
+
   Widget _listItem(VoidCallback onClick, String itemName) {
-    return SizedBox(
-      height: 50,
-      child: InkWell(
-        onTap: onClick,
-        child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(itemName, style: const TextStyle(fontSize: 25))),
-      ),
+    return Row(
+      children: [
+        Expanded(
+          flex: 9,
+          child: SizedBox(
+            height: 50,
+            child: InkWell(
+              onTap: onClick,
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(itemName,
+                      style: TextStyle(
+                          fontSize: 20, color: ThemeColors.textColor))),
+            ),
+          ),
+        ),
+        Expanded(
+            flex: 1,
+            child: SizedBox(
+                height: 22,
+                child: Image.asset('assets/moca_icon/next_button.png')))
+      ],
     );
   }
 
@@ -146,9 +190,19 @@ class _SettingsRouteState extends State<SettingsRoute> {
     String version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
     setState(() {
-      versionWidget = Center(
-          child:
-              Text('version : ' + version + '\nbuild Number : ' + buildNumber));
+      versionWidget = Column(
+        children: [
+          settingStyleText('version : $version'),
+          settingStyleText('build Number : $buildNumber')
+        ],
+      );
     });
+  }
+
+  Widget settingStyleText(String text) {
+    return Text(
+      text,
+      style: TextStyle(color: ThemeColors.textColor),
+    );
   }
 }
