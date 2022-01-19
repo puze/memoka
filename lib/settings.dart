@@ -29,8 +29,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
   }
 
   void _refreashCoinValue() {
-    if (DataManager().memokaGroupList!.addMemokaAdRemove ==
-        DataManager.adRemoveTrueValue) {
+    if (DataManager().isRemoveAds()) {
       coinValue = '광고가 제거 되었습니다.';
     } else {
       coinValue = 'Coin : ' + DataManager().memokaGroupList!.coin;
@@ -135,7 +134,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
         Navigator.push(
             context,
             PopupDialog(
-                message: '구매 중 오류가 발생 하였습니다. 잠시 후 다시 시도해 주세요.\ncode:3'));
+                message: '구매 중 오류가 발생 하였습니다.\n잠시 후 다시 시도해 주세요.\ncode:3'));
       }
     }, '메모카 광고 제거');
   }
@@ -157,28 +156,29 @@ class _SettingsRouteState extends State<SettingsRoute> {
   }
 
   Widget _listItem(VoidCallback onClick, String itemName) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 9,
-          child: SizedBox(
-            height: 50,
-            child: InkWell(
-              onTap: onClick,
+    return GestureDetector(
+      onTap: onClick,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        height: 50,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 9,
               child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(itemName,
                       style: TextStyle(
                           fontSize: 20, color: ThemeColors.textColor))),
             ),
-          ),
+            Expanded(
+                flex: 1,
+                child: SizedBox(
+                    height: 22,
+                    child: Image.asset('assets/moca_icon/next_button.png')))
+          ],
         ),
-        Expanded(
-            flex: 1,
-            child: SizedBox(
-                height: 22,
-                child: Image.asset('assets/moca_icon/next_button.png')))
-      ],
+      ),
     );
   }
 

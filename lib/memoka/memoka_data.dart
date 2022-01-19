@@ -6,17 +6,20 @@ class MemokaGroupList {
   late String coin;
   late String welcome;
   late String addMemokaAdRemove;
+  late String tutorial;
 
   MemokaGroupList(
       {required this.memokaGroups,
       required this.coin,
       required this.welcome,
-      required this.addMemokaAdRemove});
+      required this.addMemokaAdRemove,
+      required this.tutorial});
 
   MemokaGroupList.fromJson(Map<String, dynamic> json) {
     coin = json['coin'] ?? '';
     welcome = json['welcome'] ?? '';
     addMemokaAdRemove = json['add_memoka_ad_remove'] ?? '';
+    tutorial = json['tutorial'] ?? '';
     if (json['memoka_group'] != null) {
       memokaGroups = [];
       json['memoka_group'].forEach((v) {
@@ -30,6 +33,7 @@ class MemokaGroupList {
     data['coin'] = coin;
     data['welcome'] = welcome;
     data['add_memoka_ad_remove'] = addMemokaAdRemove;
+    data['tutorial'] = tutorial;
     data['memoka_group'] = memokaGroups.map((v) => v.toJson()).toList();
     return data;
   }

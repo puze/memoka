@@ -1,9 +1,11 @@
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 import 'package:memoka/memoka/memoka_group_data.dart';
 import 'package:memoka/tools/theme_colors.dart';
+import 'package:memoka/tutorials.dart';
 
 /// 메모카 카드 컨트롤
 class MemokaBody extends StatefulWidget {
@@ -20,6 +22,7 @@ class _MemokaBodyState extends State<MemokaBody> {
 
   late MemokaGroupData _memokaData;
   late Memoka _memoka;
+  bool _isTutorial = false;
   Memoka? _previousMemoka;
   late Excel memokaExcel;
 
@@ -36,6 +39,7 @@ class _MemokaBodyState extends State<MemokaBody> {
   void initState() {
     super.initState();
     initMemokaBody();
+    _tutorial();
   }
 
   void initMemokaBody() {
@@ -57,7 +61,13 @@ class _MemokaBodyState extends State<MemokaBody> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: ThemeColors.backgroundColor,
-        body: SafeArea(child: _bodyWidget()));
+        body: SafeArea(
+            child: Stack(
+          children: [
+            _bodyWidget(),
+            _tutorialWidget(),
+          ],
+        )));
   }
 
   Widget _bodyWidget() {
@@ -231,5 +241,28 @@ class _MemokaBodyState extends State<MemokaBody> {
         if (!_isShuffleBusy) _shuffle();
       },
     );
+  }
+
+  Widget _tutorialWidget() {
+    return GestureDetector(
+      onTap: () {
+        DataManager().setTutorial();
+        DataManager().saveData();
+        setState(() {
+          _isTutorial = false;
+        });
+      },
+      child: Visibility(
+          visible: _isTutorial,
+          child: Tutorials.getMemocaTutorialOverlay(context)),
+    );
+  }
+
+  void _tutorial() {
+    if (!DataManager().isTutorial()) {
+      setState(() {
+        _isTutorial = true;
+      });
+    }
   }
 }

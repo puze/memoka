@@ -11,7 +11,7 @@ import 'memoka/memoka_data.dart';
 
 class DataManager {
   static final DataManager _instance = DataManager._internal();
-  static const adRemoveTrueValue = 'true';
+  static const _trueValue = 'true';
   MemokaGroupList? memokaGroupList;
   bool beenInit = false;
 
@@ -103,9 +103,10 @@ class DataManager {
     file.create();
     var assetData = await readAssetFile();
     memokaGroupList = MemokaGroupList(
-        coin: '5',
+        coin: '3',
         welcome: 'false',
         addMemokaAdRemove: 'false',
+        tutorial: 'false',
         memokaGroups: []);
     await addExcelData(assetData);
   }
@@ -115,7 +116,19 @@ class DataManager {
     await saveData();
   }
 
+  void setRemoveAds() {
+    memokaGroupList!.addMemokaAdRemove = _trueValue;
+  }
+
   bool isRemoveAds() {
-    return memokaGroupList!.addMemokaAdRemove == adRemoveTrueValue;
+    return memokaGroupList!.addMemokaAdRemove == _trueValue;
+  }
+
+  void setTutorial() {
+    memokaGroupList!.tutorial = _trueValue;
+  }
+
+  bool isTutorial() {
+    return memokaGroupList!.tutorial == _trueValue;
   }
 }

@@ -9,6 +9,7 @@ import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 import 'package:memoka/settings.dart';
 import 'package:memoka/tools/admob.dart';
+import 'package:memoka/tutorials.dart';
 
 import 'memoka/memoka_cover.dart';
 import 'tools/inapp_purchase.dart';
@@ -63,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   File? _currentFile;
   final List<GlobalKey<MemokaCoverState>> _memokaKeyList = [];
   bool _isMemokaRemoveIcon = false;
+  bool _isTuotorial = false;
   Widget _removeMemokaIcon = Container();
   Widget _removeCancelArea = Container();
   final double entirePadding = 20;
@@ -73,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Admob().initAdmob();
     MyInappPurchase().setContext(context);
     MyInappPurchase().fetch();
-    welcomeRoutine(DataManager().memokaGroupList);
+    _init();
   }
 
   @override
@@ -91,12 +93,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return data!;
   }
 
-  Stream<void> welcomeRoutine(MemokaGroupList? data) async* {
-    // 초기화 대기
-    while (!DataManager().beenInit) {
-      yield 0;
-    }
+  void _init() async {
+    await initData();
+    welcomeRoutine(DataManager().memokaGroupList);
+    _tutorial();
+  }
 
+  void welcomeRoutine(MemokaGroupList? data) {
     if (data!.welcome != 'true') {
       data.welcome = 'true';
       data.coin = '3';
@@ -104,6 +107,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     debugPrint('coin : ' + data.coin);
+  }
+
+  void _tutorial() {
+    if (!DataManager().isTutorial()) {
+      setState(() {
+        _isTuotorial = true;
+      });
+    }
   }
 
   @override
@@ -116,7 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             _memokaFutureBuilder(),
             Visibility(visible: _isMemokaRemoveIcon, child: _removeCancelArea),
-            Visibility(visible: _isMemokaRemoveIcon, child: _removeMemokaIcon)
+            Visibility(visible: _isMemokaRemoveIcon, child: _removeMemokaIcon),
+            _tutorialWidget(context),
           ],
         ),
       ),
@@ -135,6 +147,18 @@ class _MyHomePageState extends State<MyHomePage> {
             minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
       ),
     );
+  }
+
+  Visibility _tutorialWidget(BuildContext context) {
+    return Visibility(
+        visible: _isTuotorial,
+        child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _isTuotorial = false;
+              });
+            },
+            child: Tutorials.getMainTutorialOverlay(context)));
   }
 
   FutureBuilder<MemokaGroupList> _memokaFutureBuilder() {
@@ -220,31 +244,27 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _removeMemokaIcon = Positioned(
         // left: iconSize * calculateXPos(index),
-        left: position.dx
-        // +
-        //     (MediaQuery.of(context).size.width - 3 * entirePadding) / 4 -
-        //     iconSize / 2
-        ,
+        left: position.dx +
+            (MediaQuery.of(context).size.width - 3 * entirePadding) / 4 -
+            iconSize / 2,
+        top: position.dy - 8,
         // top: (MediaQuery.of(context).size.height - kToolbarHeight - 24) /
         //     8 *
         //     ((index / 2).floor() + 1 / 2),
-        top: position.dy
-        // - iconSize / 2
-        ,
-        child: SizedBox(
-          width: iconSize,
-          height: iconSize,
-          child: RawMaterialButton(
-            onPressed: () {
-              _refreshKeyList();
-              setState(() {
-                _isMemokaRemoveIcon = false;
-                DataManager().removeMemokaGroup(memokaGroup);
-              });
-            },
-            elevation: 2.0,
-            child: Image.asset('assets/moca_icon/remove_memoca.png'),
-          ),
+        // top: position.dy - iconSize / 2,
+
+        width: iconSize,
+        height: iconSize,
+        child: RawMaterialButton(
+          onPressed: () {
+            _refreshKeyList();
+            setState(() {
+              _isMemokaRemoveIcon = false;
+              DataManager().removeMemokaGroup(memokaGroup);
+            });
+          },
+          elevation: 2.0,
+          child: Image.asset('assets/moca_icon/remove_memoca.png'),
         ),
       );
     });

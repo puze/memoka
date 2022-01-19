@@ -69,8 +69,7 @@ class MyInappPurchase {
     switch (purchaseDetails.productID) {
       case "add_memoka_ad_remove":
         debugPrint('purchase : add_memoka_ad_remove');
-        DataManager().memokaGroupList!.addMemokaAdRemove =
-            DataManager.adRemoveTrueValue;
+        DataManager().setRemoveAds();
         DataManager().saveData();
         return true;
     }

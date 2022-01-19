@@ -18,6 +18,8 @@ class MemokaGroupData {
 
   void setIndexMemoka(int index) {
     _currentIndex = index;
+    _memokaData.lastPage = _currentIndex.toString();
+    DataManager().saveData();
   }
 
   void nextMemoka() {
@@ -42,11 +44,13 @@ class MemokaGroupData {
 
   void shuffleMemoka() {
     _memokaData.memokaData.shuffle();
+    _memokaData.lastPage = _currentIndex.toString();
     DataManager().saveData();
   }
 
   void straightMemoka() {
     _memokaData.memokaData.sort((a, b) => a.index.compareTo(b.index));
+    _memokaData.lastPage = _currentIndex.toString();
     DataManager().saveData();
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:memoka/tools/theme_colors.dart';
 
 class PopupDialog extends PopupRoute {
   String message;
@@ -28,7 +29,7 @@ class PopupDialog extends PopupRoute {
     double baseHeightPadding;
     if (size.width < size.height) {
       baseWidthPadding = size.width * 0.1;
-      baseHeightPadding = size.height * 0.37;
+      baseHeightPadding = size.height * 0.36;
     } else {
       baseWidthPadding = size.width * 0.1;
       baseHeightPadding = size.height * 0.1;
@@ -46,13 +47,24 @@ class PopupDialog extends PopupRoute {
               baseWidthPadding, baseHeightPadding),
           child: Material(
             type: MaterialType.transparency,
-            child: Container(
-              color: Colors.amber,
-              child: Center(
-                  child: Text(
-                message,
-                style: const TextStyle(fontSize: 20),
-              )),
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.expand,
+              children: [
+                Image.asset('assets/moca_icon/cover.png', fit: BoxFit.fill),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                      child: Text(
+                    message,
+                    style: TextStyle(
+                        fontSize: 17,
+                        height: 1.6,
+                        color: ThemeColors.textColor),
+                    textAlign: TextAlign.center,
+                  )),
+                ),
+              ],
             ),
           ),
         ),
