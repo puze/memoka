@@ -51,7 +51,7 @@ class Admob {
         ));
   }
 
-  void showRewardedAd() {
+  void showRewardedAd({State? state}) {
     if (_rewardedAd == null) {
       debugPrint('Warning: attempt to show rewarded before loaded.');
       return;
@@ -84,6 +84,9 @@ class Admob {
       DataManager().saveData();
     });
     _rewardedAd = null;
+    if (state != null) {
+      state.setState(() {});
+    }
   }
 
   void dispose() {

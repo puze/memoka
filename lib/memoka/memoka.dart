@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:memoka/tools/theme_colors.dart';
+
 typedef Transformer = Matrix4 Function();
 
 enum MemokaStatus { init, next, previous }
@@ -79,11 +81,11 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
     _transformer = _initTransform;
     frontWidget = Text(
       widget.front,
-      style: textStyle(),
+      style: textStyle(FontWeight.w700),
     );
     backWidget = Text(
       widget.back,
-      style: textStyle(),
+      style: textStyle(FontWeight.w400),
     );
     contents = frontWidget;
     _initController();
@@ -91,8 +93,9 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
     super.initState();
   }
 
-  TextStyle textStyle() {
-    return const TextStyle(fontSize: 20);
+  TextStyle textStyle(FontWeight wegit) {
+    return TextStyle(
+        fontSize: 20, color: ThemeColors.textColor, fontWeight: wegit);
   }
 
   /// 애니메이션 컨트롤러 초기화
@@ -213,7 +216,10 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
                   )),
                   // 오른쪽 하단 페이지 넘버
                   Positioned(
-                    child: Text((widget.page + 1).toString()),
+                    child: Text(
+                      (widget.page + 1).toString(),
+                      style: TextStyle(color: ThemeColors.textColor),
+                    ),
                     right: 30,
                     bottom: 30,
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memoka/memoka/memoka_data.dart';
+import 'package:memoka/tools/theme_colors.dart';
 import 'package:vibration/vibration.dart';
 
 import 'memoka_body.dart';
@@ -46,7 +47,13 @@ class MemokaCoverState extends State<MemokaCover> {
                 ),
               ),
             ),
-            Text(widget.coverText),
+            Text(
+              widget.coverText,
+              style: TextStyle(
+                  color: ThemeColors.textColor,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15),
+            ),
           ]),
           onTap: () {
             Navigator.push(

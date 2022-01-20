@@ -117,7 +117,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
 
   Widget _watchAd() {
     return _listItem(() {
-      Admob().showRewardedAd();
+      Admob().showRewardedAd(state: this);
     }, 'Watch Ad');
   }
 
