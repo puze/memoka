@@ -7,15 +7,16 @@ class Admob {
 
   final int maxFailedLoadAttempts = 3;
   static AdRequest request = const AdRequest(
-    keywords: <String>['foo', 'bar'],
-    contentUrl: 'http://foo.com/bar.html',
-    nonPersonalizedAds: true,
-  );
+      // keywords: <String>['foo', 'bar'],
+      // contentUrl: 'http://foo.com/bar.html',
+      // nonPersonalizedAds: true,
+      );
 
   RewardedAd? _rewardedAd;
   int _numRewardedLoadAttempts = 0;
 
   final String testId = 'ca-app-pub-3940256099942544/5354046379';
+  final String rewardId = 'ca-app-pub-7658460612630664/2348277849';
 
   factory Admob() {
     return _instance;
@@ -31,7 +32,7 @@ class Admob {
 
   void _createRewardedAd() {
     RewardedAd.load(
-        adUnitId: RewardedAd.testAdUnitId,
+        adUnitId: rewardId,
         request: request,
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
