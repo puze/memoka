@@ -7,21 +7,26 @@ class LicenseRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ThemeColors.backgroundColor,
-      body: FutureBuilder(
-        future: loadFile(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData == false) {
-            return const CircularProgressIndicator();
-          } else {
-            return SafeArea(
-                child: SingleChildScrollView(
-                    child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(snapshot.data.toString()))));
-          }
-        },
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        backgroundColor: ThemeColors.backgroundColor,
+        body: FutureBuilder(
+          future: loadFile(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData == false) {
+              return const CircularProgressIndicator();
+            } else {
+              return SafeArea(
+                  child: SingleChildScrollView(
+                      child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(snapshot.data.toString()))));
+            }
+          },
+        ),
       ),
     );
   }

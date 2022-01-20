@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 // import 'package:admob_flutter/admob_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -204,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       _memokaKeyList[memokaIndex]
                           .currentState!
                           .onLongPressMemokaCover();
-                      _setRemoveMemokaIcon(context,
+                      _setRemoveMemokaIcon(window, context,
                           memokaData.memokaGroups[memokaIndex], memokaIndex);
                       _setRemoveCancelArea(
                           context, _memokaKeyList[memokaIndex].currentState!);
@@ -229,8 +230,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// 메모카 삭제 아이콘
-  void _setRemoveMemokaIcon(
-      BuildContext context, MemokaGroup memokaGroup, int index) {
+  void _setRemoveMemokaIcon(SingletonFlutterWindow window, BuildContext context,
+      MemokaGroup memokaGroup, int index) {
     // (가로 전체길이 -3*패딩)/한줄의 아이템 개수 /아이템 대비 비율
     double iconSize =
         (MediaQuery.of(context).size.width - 3 * entirePadding) / 2 / 3;
@@ -241,13 +242,19 @@ class _MyHomePageState extends State<MyHomePage> {
     double yOffset = renderBox.size.height / 2;
     Offset offset = Offset(xOffset, yOffset);
     Offset position = renderBox.localToGlobal(Offset.zero);
+    Size size = MediaQuery.of(context).size;
     setState(() {
+      final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+      final statusbarHeight2 = MediaQueryData.fromWindow(window).padding.top;
       _removeMemokaIcon = Positioned(
         // left: iconSize * calculateXPos(index),
-        left: position.dx +
-            (MediaQuery.of(context).size.width - 3 * entirePadding) / 4 -
+        left: position.dx + (size.width - 3 * entirePadding) / 4 - iconSize / 2,
+        top: position.dy -
+            statusbarHeight2 +
+            (size.width - 3 * entirePadding) / 2 * 193 / 264 / 2 -
             iconSize / 2,
-        top: position.dy - 8,
+        // position.dy - iconSize / 2,
+        // position.dy - 8,
         // top: (MediaQuery.of(context).size.height - kToolbarHeight - 24) /
         //     8 *
         //     ((index / 2).floor() + 1 / 2),

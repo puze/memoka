@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:memoka/Route/credits_route.dart';
@@ -193,7 +194,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
       versionWidget = Column(
         children: [
           settingStyleText('version : $version'),
-          settingStyleText('build Number : $buildNumber')
+          if (kDebugMode) settingStyleText('build Number : $buildNumber')
         ],
       );
     });
