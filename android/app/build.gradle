@@ -69,7 +69,7 @@ android {
            signingConfig signingConfigs.release
 
             minifyEnabled true
-            useProguard true
+            // useProguard true
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
        }
@@ -85,3 +85,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:20.5.0'
     implementation 'com.android.support:multidex:2.0.1'
 }
+
+android.buildTypes.release.ndk.debugSymbolLevel = 'FULL'
