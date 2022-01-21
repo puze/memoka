@@ -75,7 +75,8 @@ class _SettingsRouteState extends State<SettingsRoute> {
                         ),
                       )),
                   Container(
-                      height: 1, color: Color.fromARGB(100, 111, 118, 103)),
+                      height: 1,
+                      color: const Color.fromARGB(100, 111, 118, 103)),
                   Expanded(
                     flex: 9,
                     child: ListView(
@@ -111,14 +112,14 @@ class _SettingsRouteState extends State<SettingsRoute> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const LicenseRoute()));
       },
-      'License',
+      '라이센스',
     );
   }
 
   Widget _watchAd() {
     return _listItem(() {
       Admob().showRewardedAd(state: this);
-    }, 'Watch Ad');
+    }, '광고 보고 코인 얻기');
   }
 
   Widget _purchaseAddMemoka() {
