@@ -134,12 +134,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: RawMaterialButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(
+        onPressed: () async {
+          await Navigator.push(context, MaterialPageRoute(
             builder: (context) {
               return const SettingsRoute();
             },
           ));
+          _init();
+          setState(() {});
         },
         child: SizedBox(
             width: 50,

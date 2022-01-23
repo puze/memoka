@@ -246,7 +246,7 @@ class _MemokaBodyState extends State<MemokaBody> {
   Widget _tutorialWidget() {
     return GestureDetector(
       onTap: () {
-        DataManager().setTutorial();
+        DataManager().setTutorial(true);
         DataManager().saveData();
         setState(() {
           _isTutorial = false;

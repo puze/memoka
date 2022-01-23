@@ -84,6 +84,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
                       children: [
                         _purchaseAddMemoka(),
                         _watchAd(),
+                        _helpItem(),
                         _licnesItem(),
                         _creditItem(),
                       ],
@@ -155,6 +156,13 @@ class _SettingsRouteState extends State<SettingsRoute> {
         },
       ));
     }, '만든이');
+  }
+
+  Widget _helpItem() {
+    return _listItem(() {
+      Navigator.push(context, PopupDialog(message: '도움말 다시 보기가 활성화 되었습니다.'));
+      DataManager().setTutorial(false);
+    }, '도움말 다시 보기');
   }
 
   Widget _listItem(VoidCallback onClick, String itemName) {

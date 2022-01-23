@@ -12,6 +12,7 @@ import 'memoka/memoka_data.dart';
 class DataManager {
   static final DataManager _instance = DataManager._internal();
   static const _trueValue = 'true';
+  static const _falseValue = 'false';
   MemokaGroupList? memokaGroupList;
   bool beenInit = false;
 
@@ -124,8 +125,12 @@ class DataManager {
     return memokaGroupList!.addMemokaAdRemove == _trueValue;
   }
 
-  void setTutorial() {
-    memokaGroupList!.tutorial = _trueValue;
+  void setTutorial(bool set) {
+    if (set) {
+      memokaGroupList!.tutorial = _trueValue;
+    } else {
+      memokaGroupList!.tutorial = _falseValue;
+    }
   }
 
   bool isTutorial() {
