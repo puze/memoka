@@ -427,6 +427,8 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
     _alignController.forward();
   }
 
+  void _runSwitchAnimation() {}
+
   @override
   void dispose() {
     _rotationController.dispose();

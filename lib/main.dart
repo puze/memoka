@@ -10,6 +10,7 @@ import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 import 'package:memoka/settings.dart';
 import 'package:memoka/tools/admob.dart';
+import 'package:memoka/tools/dismiss_keyboard.dart';
 import 'package:memoka/tutorials.dart';
 
 import 'memoka/memoka_cover.dart';
@@ -42,12 +43,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
+    return DismissKeyboard(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.grey,
+        ),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

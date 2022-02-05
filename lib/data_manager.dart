@@ -79,8 +79,11 @@ class DataManager {
   Future<void> addExcelData(Excel excel) async {
     // table : sheet name
     for (var table in excel.tables.keys) {
-      var memokaGroup =
-          MemokaGroup(memokaCover: table, lastPage: '0', memokaData: []);
+      var memokaGroup = MemokaGroup(
+          memokaCover: table,
+          lastPage: '0',
+          memokaData: [],
+          secondaryMemokaData: []);
       memokaGroupList!.memokaGroups.add(memokaGroup);
       debugPrint('sheet name : $table'); //sheet Name
       // print(excel.tables[table]?.maxCols);

@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+import 'package:memoka/Route/add_voca_route.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka.dart';
 import 'package:memoka/memoka/memoka_data.dart';
@@ -60,14 +63,30 @@ class _MemokaBodyState extends State<MemokaBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ThemeColors.backgroundColor,
-        body: SafeArea(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: ThemeColors.backgroundColor,
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: SafeArea(
             child: Stack(
           children: [
             _bodyWidget(),
             _tutorialWidget(),
           ],
-        )));
+        )),
+      ),
+      floatingActionButton: RawMaterialButton(
+        onPressed: _openAddPopup,
+        child:
+            SizedBox(width: 60, child: Image.asset('assets/moca_icon/add.png')),
+        constraints: const BoxConstraints(
+            minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
+      ),
+    );
+  }
+
+  void _openAddPopup() async {
+    await Navigator.push(context, AddVocaRoute());
   }
 
   Widget _bodyWidget() {
@@ -85,11 +104,15 @@ class _MemokaBodyState extends State<MemokaBody> {
               ],
             ),
           ),
-          Expanded(
+          SizedBox(
+              height: size.height -
+                  56 -
+                  10 -
+                  MediaQueryData.fromWindow(window).padding.top,
               child: Stack(
-            alignment: Alignment.center,
-            children: _memokaArray,
-          )),
+                alignment: Alignment.center,
+                children: _memokaArray,
+              )),
           const SizedBox(
             height: 10,
           )
