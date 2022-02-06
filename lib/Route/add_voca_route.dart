@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:memoka/tools/popup_dialog.dart';
 import 'package:memoka/tools/theme_colors.dart';
 
 class AddVocaRoute extends PopupRoute {
+  TextEditingController frontTextController = TextEditingController();
+  TextEditingController backTextController = TextEditingController();
+  late BuildContext _context;
+
   AddVocaRoute();
 
   @override
@@ -19,6 +24,7 @@ class AddVocaRoute extends PopupRoute {
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation) {
+    _context = context;
     Size size = MediaQuery.of(context).size;
     double baseWidthPadding;
     double baseHeightPadding;
@@ -52,7 +58,9 @@ class AddVocaRoute extends PopupRoute {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text('단어 추가'),
                   TextField(
+                    controller: frontTextController,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: '단어',
@@ -60,11 +68,24 @@ class AddVocaRoute extends PopupRoute {
                     onSubmitted: (value) async {},
                   ),
                   TextField(
+                    controller: backTextController,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       labelText: '뜻',
                     ),
                     onSubmitted: (value) async {},
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RawMaterialButton(
+                          onPressed: _submit, child: const Text('확인')),
+                      RawMaterialButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('취소')),
+                    ],
                   )
                 ],
               ),
@@ -75,6 +96,31 @@ class AddVocaRoute extends PopupRoute {
     );
   }
 
+  void _submit() {
+    if (frontTextController.text == '' || backTextController.text == '') {
+      Navigator.push(_context, PopupDialog(message: '내용을 입력해 주세요'));
+      return;
+    }
+
+    Navigator.pop(
+        _context,
+        AddVocaData(
+            front: frontTextController.text, back: backTextController.text));
+  }
+
   @override
   Duration get transitionDuration => Duration(milliseconds: 150);
+
+  @override
+  void dispose() {
+    frontTextController.dispose();
+    backTextController.dispose();
+    super.dispose();
+  }
+}
+
+class AddVocaData {
+  String front;
+  String back;
+  AddVocaData({required this.front, required this.back});
 }

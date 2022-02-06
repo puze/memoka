@@ -70,4 +70,11 @@ class MemokaGroupData {
   void setLastPage() {
     _currentIndex = int.parse(_memokaData.lastPage);
   }
+
+  void addData(String front, String back) {
+    MemokaData data = MemokaData(
+        front: front, back: back, index: _memokaData.memokaData.length);
+    _memokaData.memokaData.add(data);
+    DataManager().saveData();
+  }
 }

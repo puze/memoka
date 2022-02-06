@@ -86,7 +86,13 @@ class _MemokaBodyState extends State<MemokaBody> {
   }
 
   void _openAddPopup() async {
-    await Navigator.push(context, AddVocaRoute());
+    var addData = await Navigator.push(context, AddVocaRoute());
+    if (addData == null) {
+      return;
+    }
+    AddVocaData addVocaData = addData;
+    _memokaData.addData(addVocaData.front, addVocaData.back);
+    debugPrint(addData.toString());
   }
 
   Widget _bodyWidget() {
