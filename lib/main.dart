@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:memoka/data_manager.dart';
+import 'package:memoka/dialog/add_memoca_dialog.dart';
 import 'package:memoka/memoka/memoka_data.dart';
 import 'package:memoka/settings.dart';
 import 'package:memoka/tools/admob.dart';
@@ -343,8 +344,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _addMemokaIcon() {
     return RawMaterialButton(
-      onPressed: _pickFile,
+      onPressed: _addMemoka,
       child: Image.asset('assets/moca_icon/add_memoka.png'),
     );
+  }
+
+  void _addMemoka() {
+    Navigator.push(context,
+        AddMemocaDialog(addEmptyMemoca: () {}, addExcelFile: _pickFile));
   }
 }

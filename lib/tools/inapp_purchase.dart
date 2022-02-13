@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../data_manager.dart';
-import 'popup_dialog.dart';
+import '../dialog/popup_dialog.dart';
 
 class MyInappPurchase {
   static final MyInappPurchase _instance = MyInappPurchase._internal();

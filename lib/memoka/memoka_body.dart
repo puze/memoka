@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:memoka/Route/add_voca_route.dart';
+import 'package:memoka/dialog/add_voca_route.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/memoka/memoka.dart';
 import 'package:memoka/memoka/memoka_data.dart';
@@ -45,11 +45,20 @@ class _MemokaBodyState extends State<MemokaBody> {
     _tutorial();
   }
 
-  void initMemokaBody() {
+  void initMemokaBody() async {
     _memokaData = MemokaGroupData(widget.memokaGroup);
     _memokaData.setLastPage();
-    _memoka = instanceMemoka(MemokaStatus.init);
-    _memokaArray.add(_memoka);
+    if (_memokaData.isEmpty) {
+      Future.delayed(const Duration(milliseconds: 16), () {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          _setEmptymoeka();
+          setState(() {});
+        });
+      });
+    } else {
+      _memoka = instanceMemoka(MemokaStatus.init);
+      _memokaArray.add(_memoka);
+    }
 
     /// 인스턴스화한 순간은 key의 state가 null임
     /// 해결하기위해 1frame을 skip하고 빌드를 다시함
@@ -91,7 +100,22 @@ class _MemokaBodyState extends State<MemokaBody> {
       return;
     }
     AddVocaData addVocaData = addData;
+
+    // 메모카가 비어있다면 추가 후 추가 메모카 표시
+    bool isEmpty = false;
+    if (_memokaData.isEmpty) {
+      isEmpty = true;
+    }
     _memokaData.addData(addVocaData.front, addVocaData.back);
+
+    if (isEmpty) {
+      setState(() {
+        _memokaArray.clear();
+        _memoka = instanceMemoka(MemokaStatus.next);
+        _memokaArray.add(_memoka);
+      });
+    }
+
     debugPrint(addData.toString());
   }
 
@@ -174,6 +198,20 @@ class _MemokaBodyState extends State<MemokaBody> {
     });
   }
 
+  void _removeCallback() {
+    _memokaData.removeMemoka();
+    setState(() {
+      _memokaArray.clear();
+      _memokaKey = GlobalKey();
+      if (_memokaData.isEmpty) {
+        _setEmptymoeka();
+      } else {
+        _memoka = instanceMemoka(MemokaStatus.next);
+        _memokaArray.add(_memoka);
+      }
+    });
+  }
+
   void _shuffleMiddleCallback() {
     setState(() {
       _memokaArray.remove(_previousMemoka);
@@ -240,6 +278,7 @@ class _MemokaBodyState extends State<MemokaBody> {
       isTopPage: _memokaData.isFirstMemoka(),
       nextCallback: nextCallback,
       previousCallback: _previousCallback,
+      removeCallback: _removeCallback,
       shuffleMiddleCallback: _shuffleMiddleCallback,
       shuffleEndCallback: _shuffleEndCallback,
     );
@@ -293,5 +332,26 @@ class _MemokaBodyState extends State<MemokaBody> {
         _isTutorial = true;
       });
     }
+  }
+
+  /// 메모카가 비어있을 때의 세팅
+  void _setEmptymoeka() {
+    Offset memokaOffset;
+    Size size = MediaQuery.of(context).size;
+
+    if (size.width < size.height) {
+      memokaOffset = Offset(size.width * 0.8, size.width * 0.8 * 1.4);
+    } else {
+      memokaOffset = Offset(size.height * 0.8 / 1.4, size.height * 0.8);
+    }
+    _memokaArray.clear();
+    _memokaArray.add(Container(
+      width: memokaOffset.dx,
+      height: memokaOffset.dy,
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 3),
+          borderRadius: BorderRadius.circular(10)),
+      child: Center(child: Text('Test')),
+    ));
   }
 }

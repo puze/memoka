@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:memoka/tools/popup_dialog.dart';
+import 'package:memoka/dialog/popup_dialog.dart';
 import 'package:memoka/tools/theme_colors.dart';
 
 class AddVocaRoute extends PopupRoute {
@@ -36,29 +35,33 @@ class AddVocaRoute extends PopupRoute {
       baseHeightPadding =
           (size.height - size.width * widthRatio * heightRatio) / 2;
     } else {
-      baseWidthPadding = size.width * 0.1;
-      baseHeightPadding = size.height * 0.1;
+      //TODO pad size
+      double widthRatio = 0.82;
+      baseWidthPadding = size.width * (1 - widthRatio) / 2;
+      double heightRatio = 729 / 907;
+      baseHeightPadding =
+          (size.height - size.width * widthRatio * heightRatio) / 2;
     }
     MediaQuery.of(context).size.height * baseWidthPadding;
-    return FadeTransition(
-      opacity: Tween<double>(begin: 0, end: 1).animate(animation),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(baseWidthPadding, baseHeightPadding * 0.9,
-            baseWidthPadding, baseHeightPadding * 1.1),
-        child: Material(
-          type: MaterialType.transparency,
-          child: Card(
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-              //모서리를 둥글게 하기 위해 사용
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            color: ThemeColors.darkGreen,
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        //모서리를 둥글게 하기 위해 사용
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      elevation: 10,
+      backgroundColor: ThemeColors.darkGreen,
+      child: SizedBox(
+        width: size.width * 0.8,
+        height: size.width * 0.8 * 0.8,
+        child: FadeTransition(
+          opacity: Tween<double>(begin: 0, end: 1).animate(animation),
+          child: Material(
+            type: MaterialType.transparency,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 15,
+                  height: 20,
                 ),
                 Text('단어 추가',
                     style: TextStyle(
@@ -70,9 +73,12 @@ class AddVocaRoute extends PopupRoute {
                   child: TextField(
                     controller: frontTextController,
                     decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ThemeColors.textColor)),
                         labelText: '단어',
                         labelStyle: TextStyle(color: Colors.grey[600])),
+                    style: TextStyle(color: Colors.grey[700]),
                     onSubmitted: (value) async {},
                   ),
                 ),
@@ -81,9 +87,12 @@ class AddVocaRoute extends PopupRoute {
                   child: TextField(
                     controller: backTextController,
                     decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ThemeColors.textColor)),
                         labelText: '뜻',
                         labelStyle: TextStyle(color: Colors.grey[600])),
+                    style: TextStyle(color: Colors.grey[700]),
                     onSubmitted: (value) async {},
                   ),
                 ),

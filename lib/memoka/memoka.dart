@@ -15,6 +15,7 @@ class Memoka extends StatefulWidget {
   final MemokaStatus status;
   final VoidCallback nextCallback;
   final VoidCallback previousCallback;
+  final VoidCallback removeCallback;
   final VoidCallback shuffleMiddleCallback;
   final VoidCallback shuffleEndCallback;
 
@@ -26,6 +27,7 @@ class Memoka extends StatefulWidget {
     required this.status,
     required this.nextCallback,
     required this.previousCallback,
+    required this.removeCallback,
     required this.shuffleMiddleCallback,
     required this.shuffleEndCallback,
     required this.isTopPage,
@@ -65,15 +67,21 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
   late Animation<double> _shuffleBackAnimation;
   bool isShuffleMidle = false;
 
+  // 삭제 컨트롤러
+  late AnimationController _removeController;
+  late Animation<Alignment> _removeAnimation;
+
   late Widget frontWidget;
   late Widget backWidget;
   late Widget contents;
 
   Alignment _dragAlignment = Alignment.center;
-  final Alignment _rightAlign = const Alignment(10, 0);
-  final Alignment _leftAlign = const Alignment(-10, 0);
+  final Alignment _rightAlign = const Alignment(5, 0);
+  final Alignment _leftAlign = const Alignment(-5, 0);
+  final Alignment _upAlign = const Alignment(0, -5);
 
   double _dx = 0;
+  double _dy = 0;
   int _blackFiltter = 255;
 
   @override
@@ -125,6 +133,17 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
         _dragAlignment = _animation.value;
         if (_animation.isCompleted) {
           widget.previousCallback();
+        }
+      });
+    });
+
+    _removeController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: _alignTime));
+    _removeController.addListener(() {
+      setState(() {
+        _dragAlignment = _removeAnimation.value;
+        if (_removeAnimation.isCompleted) {
+          widget.removeCallback();
         }
       });
     });
@@ -230,22 +249,28 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
         ),
         onPanDown: (details) {
           _dx = 0;
+          _dy = 0;
         },
         onPanUpdate: (details) {
           setState(() {
             _dragAlignment += Alignment(
               details.delta.dx / (size.width / 8),
-              details.delta.dy / (size.height / 2),
+              details.delta.dy / (size.height / 4),
             );
           });
           _dx += details.delta.dx;
+          _dy += details.delta.dy;
         },
         onPanEnd: (details) {
           debugPrint('dx : ' + _dx.toString());
-          if (_dx < -threshold) {
+          debugPrint('dy : ' + _dy.toString());
+          double dyOffset = 0.5; // 좌우 이동에 가중치
+          if (_dx < -threshold && _dx < _dy * dyOffset) {
             _runNextAnimation();
-          } else if (_dx > threshold) {
+          } else if (_dx > threshold && _dx > -_dy * dyOffset) {
             _runPreviousAnimation();
+          } else if (_dy < -threshold) {
+            _runRemoveMemokaAnimation();
           } else {
             _runReturnAnimation();
           }
@@ -425,6 +450,13 @@ class MemokaState extends State<Memoka> with TickerProviderStateMixin {
     );
     _alignController.reset();
     _alignController.forward();
+  }
+
+  void _runRemoveMemokaAnimation() {
+    _removeAnimation = _removeController
+        .drive(AlignmentTween(begin: _dragAlignment, end: _upAlign));
+    _removeController.reset();
+    _removeController.forward();
   }
 
   void _runSwitchAnimation() {}

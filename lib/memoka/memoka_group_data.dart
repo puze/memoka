@@ -42,6 +42,17 @@ class MemokaGroupData {
     DataManager().saveData();
   }
 
+  void removeMemoka() {
+    _memokaData.memokaData.removeAt(_currentIndex);
+    for (int i = 0; i < _memokaData.memokaData.length; i++) {
+      _memokaData.memokaData[i].index = i;
+    }
+    if (_currentIndex >= _memokaData.memokaData.length) {
+      _currentIndex = 0;
+    }
+    DataManager().saveData();
+  }
+
   void shuffleMemoka() {
     _memokaData.memokaData.shuffle();
     _memokaData.lastPage = _currentIndex.toString();
@@ -76,5 +87,9 @@ class MemokaGroupData {
         front: front, back: back, index: _memokaData.memokaData.length);
     _memokaData.memokaData.add(data);
     DataManager().saveData();
+  }
+
+  bool get isEmpty {
+    return _memokaData.memokaData.isEmpty;
   }
 }

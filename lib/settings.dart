@@ -5,7 +5,7 @@ import 'package:memoka/Route/credits_route.dart';
 import 'package:memoka/data_manager.dart';
 import 'package:memoka/tools/admob.dart';
 import 'package:memoka/tools/inapp_purchase.dart';
-import 'package:memoka/tools/popup_dialog.dart';
+import 'package:memoka/dialog/popup_dialog.dart';
 import 'package:memoka/tools/theme_colors.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:collection/collection.dart';
