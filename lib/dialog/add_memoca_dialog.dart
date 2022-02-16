@@ -11,13 +11,15 @@ class AddMemocaDialog extends PopupRoute {
   AddMemocaDialog({required this.addEmptyMemoca, required this.addExcelFile});
 
   @override
-  Color? get barrierColor => Color.fromARGB(68, 0, 0, 0);
+  Color? get barrierColor => Color.fromARGB(60, 0, 0, 0);
 
   @override
   bool get barrierDismissible => true;
 
   @override
   String? get barrierLabel => 'AddMemocaDialog';
+
+  double radius = 30;
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
@@ -26,38 +28,65 @@ class AddMemocaDialog extends PopupRoute {
     return FadeTransition(
       opacity: Tween<double>(begin: 0, end: 1).animate(animation),
       child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
         backgroundColor: ThemeColors.darkGreen,
         child: SizedBox(
           width: size.width * 0.8,
           height: size.width * 0.8 * 0.8,
-          child: _contents(),
+          child: _contents(context),
         ),
       ),
     );
   }
 
-  Widget _contents() {
+  Widget _contents(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           flex: 3,
-          child: Center(
-            child: Text(
-              '단어장 추가하기',
-              style: TextStyle(color: Colors.grey[800], fontSize: 22),
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(radius),
+                topRight: Radius.circular(radius)),
+            child: Container(
+              color: Color.fromARGB(255, 146, 168, 139),
+              child: Center(
+                child: Text(
+                  '단어장 추가하기',
+                  style: TextStyle(color: Colors.grey[800], fontSize: 22),
+                ),
+              ),
             ),
           ),
         ),
-        Expanded(flex: 1, child: Divider(thickness: 3)),
         Expanded(flex: 3, child: _textTheme('빈 단어장 추가하기', addEmptyMemoca)),
+        Container(
+          height: 1,
+          color: Colors.grey,
+        ),
+        Expanded(flex: 3, child: _textTheme('엑셀로 단어장 추가하기', addExcelFile)),
+        Container(
+          height: 1,
+          color: Colors.grey,
+        ),
         Expanded(
-            flex: 1,
-            child: Divider(
-              thickness: 2,
-            )),
-        Expanded(flex: 3, child: _textTheme('엑셀로 단어장 추가하기', addExcelFile))
+            flex: 3,
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Center(
+                child: Text(
+                  '취소',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: ThemeColors.textColor,
+                      fontSize: 20),
+                ),
+              ),
+            ))
       ],
     );
   }
@@ -68,7 +97,7 @@ class AddMemocaDialog extends PopupRoute {
       child: Center(
         child: Text(
           string,
-          style: TextStyle(color: ThemeColors.textColor, fontSize: 18),
+          style: TextStyle(color: ThemeColors.textColor, fontSize: 20),
         ),
       ),
     );

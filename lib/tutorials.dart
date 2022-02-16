@@ -44,20 +44,30 @@ class Tutorials {
             top: 56 - 3,
             child: Image.asset('assets/tutorial/shuffle.png')),
         Positioned(
-            left: size.width * 0.1,
-            right: size.width * 0.28,
-            top: size.width * 0.7 * 1.4 / 2,
+            left: size.width * 0.2,
+            right: size.width * 0.24,
+            top: size.width * 0.65 * 1.4 / 2,
             child: Image.asset('assets/tutorial/first_page.png')),
         Positioned(
-            left: size.width * 0.2,
-            right: size.width * 0.15,
-            top: size.height * 0.4,
+            left: size.width * 0.15,
+            right: size.width * 0.25,
+            top: size.height * 0.5,
             child: Image.asset('assets/tutorial/tab.png')),
         Positioned(
-            left: size.width * 0.05,
-            right: size.width * 0.05,
+            left: size.width * 0.15,
+            right: size.width * 0.15,
             top: size.height * 0.6,
-            child: Image.asset('assets/tutorial/swap.png'))
+            child: Image.asset('assets/tutorial/swap.png')),
+        Positioned(
+            left: size.width * 0.45,
+            right: size.width * 0.2,
+            top: size.height * 0.8,
+            child: Image.asset('assets/tutorial/add_voca.png')),
+        Positioned(
+            left: size.width * 0.35,
+            right: size.width * 0.25,
+            top: size.height * 0.33,
+            child: Image.asset('assets/tutorial/remove_voca.png'))
       ],
     );
   }
@@ -115,9 +125,12 @@ class OverlayMemocaTutorial extends CustomPainter {
                 radius: 56 / 2 - 5))
             // 첫페이지
             ..addOval(Rect.fromCircle(
-                center: Offset(size.width * 0.85,
-                    (size.height + 56 - 10) / 2 - size.width * 0.7 * 1.4 / 2),
-                radius: size.width * 0.13))
+                center: Offset(
+                    size.width * 0.85,
+                    (size.height + 56 - 10) / 2 -
+                        size.width * 0.7 * 1.4 / 2 -
+                        25),
+                radius: size.width * 0.12))
             ..close(),
         ),
         paint);

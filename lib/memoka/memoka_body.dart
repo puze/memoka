@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:memoka/dialog/add_voca_route.dart';
@@ -345,13 +346,38 @@ class _MemokaBodyState extends State<MemokaBody> {
       memokaOffset = Offset(size.height * 0.8 / 1.4, size.height * 0.8);
     }
     _memokaArray.clear();
-    _memokaArray.add(Container(
-      width: memokaOffset.dx,
-      height: memokaOffset.dy,
-      decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey, width: 3),
-          borderRadius: BorderRadius.circular(10)),
-      child: Center(child: Text('Test')),
+    double CardRadius = 20;
+    _memokaArray.add(DottedBorder(
+      color: Color.fromARGB(255, 155, 171, 144),
+      strokeWidth: 3,
+      radius: Radius.circular(CardRadius),
+      dashPattern: [25, 20],
+      customPath: (size) {
+        return Path()
+          ..moveTo(CardRadius, 0)
+          ..lineTo(size.width - CardRadius, 0)
+          ..arcToPoint(Offset(size.width, CardRadius),
+              radius: Radius.circular(CardRadius))
+          ..lineTo(size.width, size.height - CardRadius)
+          ..arcToPoint(Offset(size.width - CardRadius, size.height),
+              radius: Radius.circular(CardRadius))
+          ..lineTo(CardRadius, size.height)
+          ..arcToPoint(Offset(0, size.height - CardRadius),
+              radius: Radius.circular(CardRadius))
+          ..lineTo(0, CardRadius)
+          ..arcToPoint(Offset(CardRadius, 0),
+              radius: Radius.circular(CardRadius));
+      },
+      child: SizedBox(
+        width: memokaOffset.dx,
+        height: memokaOffset.dy,
+        child: Center(
+            child: Text(
+          '오른쪽 하단의\n+ 버튼을 이용하여\n단어를 추가해 주세요.',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 25, color: ThemeColors.textColor),
+        )),
+      ),
     ));
   }
 }
