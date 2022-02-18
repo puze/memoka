@@ -44,13 +44,12 @@ class MemokaGroup {
   late String memokaCover;
   late String lastPage;
   late List<MemokaData> memokaData;
-  late List<MemokaData> secondaryMemokaData;
 
-  MemokaGroup(
-      {required this.memokaCover,
-      required this.memokaData,
-      required this.lastPage,
-      required this.secondaryMemokaData});
+  MemokaGroup({
+    required this.memokaCover,
+    required this.memokaData,
+    required this.lastPage,
+  });
 
   MemokaGroup.fromJson(Map<String, dynamic> json) {
     memokaCover = json['memoka_cover'];
@@ -61,12 +60,6 @@ class MemokaGroup {
         memokaData.add(MemokaData.fromJson(v));
       });
     }
-    if (json['secondary_memoka_data'] != null) {
-      secondaryMemokaData = <MemokaData>[];
-      json['secondary_memoka_data'].forEach((v) {
-        secondaryMemokaData.add(MemokaData.fromJson(v));
-      });
-    }
   }
 
   Map<String, dynamic> toJson() {
@@ -74,8 +67,6 @@ class MemokaGroup {
     data['memoka_cover'] = memokaCover;
     data['last_page'] = lastPage;
     data['memoka_data'] = memokaData.map((v) => v.toJson()).toList();
-    data['secondary_memoka_data'] =
-        secondaryMemokaData.map((v) => v.toJson()).toList();
     return data;
   }
 }

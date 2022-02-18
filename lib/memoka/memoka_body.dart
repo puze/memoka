@@ -90,7 +90,7 @@ class _MemokaBodyState extends State<MemokaBody> {
         child:
             SizedBox(width: 60, child: Image.asset('assets/moca_icon/add.png')),
         constraints: const BoxConstraints(
-            minWidth: 50, minHeight: 50, maxHeight: 70, maxWidth: 70),
+            minWidth: 40, minHeight: 40, maxHeight: 60, maxWidth: 60),
       ),
     );
   }
@@ -346,12 +346,12 @@ class _MemokaBodyState extends State<MemokaBody> {
       memokaOffset = Offset(size.height * 0.8 / 1.4, size.height * 0.8);
     }
     _memokaArray.clear();
-    double CardRadius = 20;
+    double CardRadius = 40;
     _memokaArray.add(DottedBorder(
       color: Color.fromARGB(255, 155, 171, 144),
       strokeWidth: 3,
       radius: Radius.circular(CardRadius),
-      dashPattern: [25, 20],
+      dashPattern: [20, 20],
       customPath: (size) {
         return Path()
           ..moveTo(CardRadius, 0)
@@ -375,7 +375,10 @@ class _MemokaBodyState extends State<MemokaBody> {
             child: Text(
           '오른쪽 하단의\n+ 버튼을 이용하여\n단어를 추가해 주세요.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 25, color: ThemeColors.textColor),
+          style: TextStyle(
+              fontSize: 22,
+              color: Color.fromARGB(255, 155, 171, 144),
+              fontWeight: FontWeight.w800),
         )),
       ),
     ));

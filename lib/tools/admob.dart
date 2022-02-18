@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:memoka/data_manager.dart';
@@ -15,7 +16,7 @@ class Admob {
   RewardedAd? _rewardedAd;
   int _numRewardedLoadAttempts = 0;
 
-  final String testId = 'ca-app-pub-3940256099942544/5354046379';
+  final String testId = 'ca-app-pub-3940256099942544/5224354917';
   final String rewardId = 'ca-app-pub-7658460612630664/2348277849';
 
   factory Admob() {
@@ -32,7 +33,7 @@ class Admob {
 
   void _createRewardedAd() {
     RewardedAd.load(
-        adUnitId: rewardId,
+        adUnitId: kReleaseMode ? rewardId : RewardedAd.testAdUnitId,
         request: request,
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
@@ -41,8 +42,9 @@ class Admob {
             _numRewardedLoadAttempts = 0;
           },
           onAdFailedToLoad: (LoadAdError error) {
-            debugPrint('RewardedAd failed to load: $error');
             _rewardedAd = null;
+            debugPrint(
+                'RewardedAd failed to load($_numRewardedLoadAttempts) : $error');
             _numRewardedLoadAttempts += 1;
             if (_numRewardedLoadAttempts <= maxFailedLoadAttempts) {
               _createRewardedAd();

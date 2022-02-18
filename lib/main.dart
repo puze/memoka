@@ -14,6 +14,7 @@ import 'package:memoka/tools/admob.dart';
 import 'package:memoka/tools/dismiss_keyboard.dart';
 import 'package:memoka/tutorials.dart';
 
+import 'memoka/memoka_body.dart';
 import 'memoka/memoka_cover.dart';
 import 'tools/inapp_purchase.dart';
 import 'tools/theme_colors.dart';
@@ -300,8 +301,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ));
   }
 
-  /// 외부파일 불러오기
-  Future<void> _pickFile() async {
+  Widget _addMemokaIcon() {
+    return RawMaterialButton(
+      onPressed: _addMemoka,
+      child: Image.asset('assets/moca_icon/add_memoka.png'),
+    );
+  }
+
+  void _addMemoka() {
     int coin = int.parse(DataManager().memokaGroupList!.coin);
     // 광고제거 모드시 건너뜀
     if (!DataManager().isRemoveAds()) {
@@ -312,6 +319,32 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
+    Navigator.push(
+        context,
+        AddMemocaDialog(
+            addEmptyMemoca: _addEmptyMemoca, addExcelFile: _pickFile));
+  }
+
+  void _addEmptyMemoca() {
+    DataManager().useCoin();
+    setState(() {
+      _refreshKeyList();
+    });
+
+    var memokaGroups = DataManager().memokaGroupList!.memokaGroups;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Scaffold(
+                  body: MemokaBody(
+                memokaGroup: memokaGroups[memokaGroups.length - 1],
+              ))),
+    );
+  }
+
+  /// 외부파일 불러오기
+  Future<void> _pickFile() async {
     FilePickerResult? result;
     try {
       // setState(() {
@@ -328,9 +361,21 @@ class _MyHomePageState extends State<MyHomePage> {
         _currentFile = File(result.files.single.path!);
         var excelFile = DataManager().readExternalFile(_currentFile!);
         // addExcelData에서 데이터저장
-        DataManager().memokaGroupList!.coin = (coin - 1).toString();
+        DataManager().useCoin();
         debugPrint('coin : ' + DataManager().memokaGroupList!.coin);
         await DataManager().addExcelData(excelFile);
+
+        var memokaGroups = DataManager().memokaGroupList!.memokaGroups;
+
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Scaffold(
+                      body: MemokaBody(
+                    memokaGroup: memokaGroups[memokaGroups.length - 1],
+                  ))),
+        );
       } else {
         // User canceled the picker
         _currentFile = null;
@@ -340,17 +385,5 @@ class _MyHomePageState extends State<MyHomePage> {
         _refreshKeyList();
       });
     }
-  }
-
-  Widget _addMemokaIcon() {
-    return RawMaterialButton(
-      onPressed: _addMemoka,
-      child: Image.asset('assets/moca_icon/add_memoka.png'),
-    );
-  }
-
-  void _addMemoka() {
-    Navigator.push(context,
-        AddMemocaDialog(addEmptyMemoca: () {}, addExcelFile: _pickFile));
   }
 }

@@ -80,10 +80,10 @@ class DataManager {
     // table : sheet name
     for (var table in excel.tables.keys) {
       var memokaGroup = MemokaGroup(
-          memokaCover: table,
-          lastPage: '0',
-          memokaData: [],
-          secondaryMemokaData: []);
+        memokaCover: table,
+        lastPage: '0',
+        memokaData: [],
+      );
       memokaGroupList!.memokaGroups.add(memokaGroup);
       debugPrint('sheet name : $table'); //sheet Name
       // print(excel.tables[table]?.maxCols);
@@ -138,5 +138,22 @@ class DataManager {
 
   bool isTutorial() {
     return memokaGroupList!.tutorial == _trueValue;
+  }
+
+  MemokaGroup createEmptyMemoca(String cover) {
+    var memokaGroup = MemokaGroup(
+      memokaCover: cover,
+      lastPage: '0',
+      memokaData: [],
+    );
+    memokaGroupList!.memokaGroups.add(memokaGroup);
+    saveData();
+    return memokaGroup;
+  }
+
+  void useCoin() {
+    int coin = int.parse(DataManager().memokaGroupList!.coin);
+    DataManager().memokaGroupList!.coin = (coin - 1).toString();
+    saveData();
   }
 }
