@@ -82,15 +82,19 @@ class _MemokaBodyState extends State<MemokaBody> {
           children: [
             _bodyWidget(),
             _tutorialWidget(),
+            Positioned(
+              right: 20,
+              bottom: 20,
+              child: RawMaterialButton(
+                onPressed: _openAddPopup,
+                child: SizedBox(
+                    width: 60, child: Image.asset('assets/moca_icon/add.png')),
+                constraints: const BoxConstraints(
+                    minWidth: 40, minHeight: 40, maxHeight: 60, maxWidth: 60),
+              ),
+            ),
           ],
         )),
-      ),
-      floatingActionButton: RawMaterialButton(
-        onPressed: _openAddPopup,
-        child:
-            SizedBox(width: 60, child: Image.asset('assets/moca_icon/add.png')),
-        constraints: const BoxConstraints(
-            minWidth: 40, minHeight: 40, maxHeight: 60, maxWidth: 60),
       ),
     );
   }
