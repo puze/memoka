@@ -76,7 +76,8 @@ class Admob {
     _rewardedAd!.setImmersiveMode(true);
 
     // 보상형 광고 실행
-    _rewardedAd!.show(onUserEarnedReward: (RewardedAd ad, RewardItem reward) {
+    _rewardedAd!.show(
+        onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
       debugPrint(
           '$ad with reward $RewardItem(${reward.amount}, ${reward.type}');
       int coin =
